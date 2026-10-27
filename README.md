@@ -1,6 +1,8 @@
 # Quant Projects
 
-Write-ups applying the theory from the University of Washington M.S. in Computational Finance and Risk Management (CFRM) to real market data.
+These are personal articles I wrote while working through the M.S. in Computational Finance and Risk Management (CFRM) at the University of Washington. They weren't assignments. After each course I wanted to see whether the theory held up outside the classroom, so I took an idea from it and tried it on real market data: hunting for cointegrated pairs across the S&P 500, testing whether fat-tailed distributions make better forecasts, comparing risk measures in a real backtest, and modeling how stocks react to earnings.
+
+Some results matched what I expected, and some didn't. The Normal distribution beat the "better fitting" Laplace in most of my sector tests, which taught me as much as the wins did.
 
 Read them rendered at **https://roo-ctrl.github.io/quant-projects/**
 
