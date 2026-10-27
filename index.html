@@ -5,35 +5,35 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Quant Projects</title>
 <style>
-  body { font-family: Georgia, serif; max-width: 760px; margin: 48px auto; padding: 0 16px; color: #1a1a1a; line-height: 1.55; }
+  body { font-family: Georgia, serif; max-width: 760px; margin: 48px auto; padding: 0 16px; color: #1a1a1a; line-height: 1.6; background: #fff; }
   h1 { margin-bottom: 4px; }
+  h2 { margin-top: 36px; font-size: 1.2em; }
   .sub { color: #555; margin-top: 0; }
   li { margin: 18px 0; }
   a { color: #1a4fa0; font-weight: bold; text-decoration: none; }
   a:hover { text-decoration: underline; }
-  h2 { margin-top: 36px; font-size: 1.2em; }
   .course { color: #555; font-size: 0.9em; }
 </style>
 </head>
 <body>
 <h1>Quant Projects</h1>
 <p class="sub">Lahiru Fernando</p>
-<p>These are personal articles, not homework. While I was working through the M.S. in Computational Finance and Risk Management at the University of Washington, I kept running into the same itch: the theory looked clean on the whiteboard, but would it actually hold up on real market data? So after each course I picked one idea and went to find out.</p>
+<p>These are personal articles, not homework. While I was working through the M.S. in Computational Finance and Risk Management at the University of Washington, I kept running into the same itch. The theory looked clean on the whiteboard, but would it actually hold up on real market data? So after each course I picked one idea and went to find out.</p>
 <p>That meant hunting for cointegrated pairs across the entire S&amp;P 500, pitting three risk measures against each other in a backtest, and forecasting how bank stocks would move on earnings day, the night before they reported.</p>
-<p>My favorite came out of Machine Learning for Finance (CFRM 521). I grew up in Washington County, Oregon, so I took what I learned there and tried forecasting its median home sale price with a &ldquo;wisdom of the crowd&rdquo; twist: four regression models, each trusted more or less depending on the macro regime it had historically done well in. That regime-weighted forecast beat every individual model by a wide margin.</p>
-<p>Not everything went my way. I was sure a fat-tailed Laplace distribution, which fit daily returns far better than a Normal, would make better price forecasts. It didn't. Add up enough Laplace days and you get something that looks a lot like a Normal again. That's the Central Limit Theorem, and I learned it the hard way. Surprises like that taught me more than the wins did.</p>
+<p>My favorite came out of Machine Learning for Finance (CFRM 521). I grew up in Washington County, Oregon, so I took what I learned there and tried forecasting the county’s median home sale price with a “wisdom of the crowd” twist. I trained four regression models and let each one have more or less say depending on how well it had done in similar economic times. That blended forecast beat every individual model by a wide margin.</p>
+<p>Not everything went my way. I was sure a fat tailed Laplace distribution, which fit daily returns far better than a Normal, would make better price forecasts. It didn’t. Add up enough Laplace days and you get something that looks a lot like a Normal again. That’s the Central Limit Theorem, and I learned it the hard way. Surprises like that taught me more than the wins did.</p>
 <h2>The articles</h2>
 <ul>
-  <li><a href="housing-median-price-regime-ensemble.html">Housing Research: Wisdom of the Crowd</a> <span class="course">(CFRM 521, 2024 &middot; my favorite)</span><br>
-  Forecasts Washington County, OR median home sale price with Linear, Lasso, Ridge, and ElasticNet, weighted by how each did in the current macro regime (PCA + k-means on FRED data). Out of sample, the regime-weighted forecast cut error about 5&times; versus the best single model.</li>
-  <li><a href="cointegration-pairs-cfrm502.html">Cointegration and the Two-Step Method</a> <span class="course">(CFRM 502, 2023)</span><br>
-  Screens every S&amp;P 500 pair for cointegration (Engle-Granger, Phillips-Ouliaris, KPSS) and tracks the surviving spreads out of sample.</li>
-  <li><a href="risk-measures-mv-mad-cvar-cfrm503.html">Risk Measures: Mean-Variance vs. MAD vs. CVaR</a> <span class="course">(CFRM 503, 2023)</span><br>
-  Three convex portfolio optimizers (CVXPY) over sector ETFs, rebalanced monthly and backtested 2018–2020 on returns, drawdown, and 5% CVaR.</li>
-  <li><a href="laplace-vs-normal-monte-carlo-cfrm501.html">Monte Carlo: Laplace vs. Normal Returns</a> <span class="course">(CFRM 501, 2023)</span><br>
-  Fits a fat-tailed Laplace distribution by method of moments and compares its 1–21 day S&amp;P 500 price forecasts against a Normal model, by sector.</li>
+  <li><a href="housing-median-price-regime-ensemble.html">Housing Research, Wisdom of the Crowd</a> <span class="course">(CFRM 521, 2024 · my favorite)</span><br>
+  Four models forecast my home county’s median sale price, and whichever has done best in similar economic times gets the loudest voice. The blended forecast came out about five times more accurate than the best single model.</li>
+  <li><a href="cointegration-pairs-cfrm502.html">Cointegration and the Two Step Method</a> <span class="course">(CFRM 502, 2023)</span><br>
+  I searched every pair of S&amp;P 500 stocks for two that drift apart and snap back together, then watched how the best three behaved once my data ended.</li>
+  <li><a href="risk-measures-mv-mad-cvar-cfrm503.html">Mean Variance vs. MAD vs. CVaR</a> <span class="course">(CFRM 503, 2023)</span><br>
+  Three different ways to build a portfolio around risk, each rebuilt every month and run through three years of real markets to see which held up best.</li>
+  <li><a href="laplace-vs-normal-monte-carlo-cfrm501.html">Laplace vs. Normal Monte Carlo</a> <span class="course">(CFRM 501, 2023)</span><br>
+  Stock returns have fatter tails than a bell curve, so I tested whether simulating prices with a fatter tailed distribution gives better forecasts. Mostly, it didn’t.</li>
   <li><a href="composition-monte-carlo-earnings-cfrm505.html">Composition Monte Carlo With Earnings</a> <span class="course">(CFRM 505, 2024)</span><br>
-  Mixes post-earnings price-move distributions for EPS beats and misses to forecast earnings-day ranges for JPM, C, and BAC.</li>
+  How a stock moves on earnings day depends on whether the company beats or misses. I modeled both outcomes, mixed them by how often each happens, and forecast JPM, C, and BAC the night before they reported.</li>
 </ul>
 </body>
 </html>
