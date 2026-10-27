@@ -20,9 +20,12 @@
 <p class="sub">Lahiru Fernando</p>
 <p>These are personal articles, not homework. While I was working through the M.S. in Computational Finance and Risk Management at the University of Washington, I kept running into the same itch: the theory looked clean on the whiteboard, but would it actually hold up on real market data? So after each course I picked one idea and went to find out.</p>
 <p>That meant hunting for cointegrated pairs across the entire S&amp;P 500, pitting three risk measures against each other in a backtest, and forecasting how bank stocks would move on earnings day, the night before they reported.</p>
+<p>My favorite isn't from a course at all. I grew up in Washington County, Oregon, so I tried forecasting its median home sale price with a &ldquo;wisdom of the crowd&rdquo; twist: four regression models, each trusted more or less depending on the macro regime it had historically done well in. That regime-weighted forecast beat every individual model by a wide margin.</p>
 <p>Not everything went my way. I was sure a fat-tailed Laplace distribution, which fit daily returns far better than a Normal, would make better price forecasts. It didn't. Add up enough Laplace days and you get something that looks a lot like a Normal again. That's the Central Limit Theorem, and I learned it the hard way. Surprises like that taught me more than the wins did.</p>
 <h2>The articles</h2>
 <ul>
+  <li><a href="housing-median-price-regime-ensemble.html">Housing Research: Wisdom of the Crowd</a> <span class="course">(personal, 2024 &middot; my favorite)</span><br>
+  Forecasts Washington County, OR median home sale price with Linear, Lasso, Ridge, and ElasticNet, weighted by how each did in the current macro regime (PCA + k-means on FRED data). Out of sample, the regime-weighted forecast cut error about 5&times; versus the best single model.</li>
   <li><a href="cointegration-pairs-cfrm502.html">Cointegration and the Two-Step Method</a> <span class="course">(CFRM 502, 2023)</span><br>
   Screens every S&amp;P 500 pair for cointegration (Engle-Granger, Phillips-Ouliaris, KPSS) and tracks the surviving spreads out of sample.</li>
   <li><a href="risk-measures-mv-mad-cvar-cfrm503.html">Risk Measures: Mean-Variance vs. MAD vs. CVaR</a> <span class="course">(CFRM 503, 2023)</span><br>
