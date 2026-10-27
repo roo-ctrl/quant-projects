@@ -11,12 +11,17 @@
   li { margin: 18px 0; }
   a { color: #1a4fa0; font-weight: bold; text-decoration: none; }
   a:hover { text-decoration: underline; }
+  h2 { margin-top: 36px; font-size: 1.2em; }
   .course { color: #555; font-size: 0.9em; }
 </style>
 </head>
 <body>
 <h1>Quant Projects</h1>
-<p class="sub">Lahiru Fernando · personal articles where I took the theory from my University of Washington M.S. in Computational Finance and Risk Management and tried it on real market data.</p>
+<p class="sub">Lahiru Fernando</p>
+<p>These are personal articles, not homework. While I was working through the M.S. in Computational Finance and Risk Management at the University of Washington, I kept running into the same itch: the theory looked clean on the whiteboard, but would it actually hold up on real market data? So after each course I picked one idea and went to find out.</p>
+<p>That meant hunting for cointegrated pairs across the entire S&amp;P 500, pitting three risk measures against each other in a backtest, and forecasting how bank stocks would move on earnings day, the night before they reported.</p>
+<p>Not everything went my way. I was sure a fat-tailed Laplace distribution, which fit daily returns far better than a Normal, would make better price forecasts. It didn't. Add up enough Laplace days and you get something that looks a lot like a Normal again. That's the Central Limit Theorem, and I learned it the hard way. Surprises like that taught me more than the wins did.</p>
+<h2>The articles</h2>
 <ul>
   <li><a href="cointegration-pairs-cfrm502.html">Cointegration and the Two-Step Method</a> <span class="course">(CFRM 502, 2023)</span><br>
   Screens every S&amp;P 500 pair for cointegration (Engle-Granger, Phillips-Ouliaris, KPSS) and tracks the surviving spreads out of sample.</li>

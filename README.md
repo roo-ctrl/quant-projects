@@ -1,8 +1,10 @@
 # Quant Projects
 
-These are personal articles I wrote while working through the M.S. in Computational Finance and Risk Management (CFRM) at the University of Washington. They weren't assignments. After each course I wanted to see whether the theory held up outside the classroom, so I took an idea from it and tried it on real market data: hunting for cointegrated pairs across the S&P 500, testing whether fat-tailed distributions make better forecasts, comparing risk measures in a real backtest, and modeling how stocks react to earnings.
+These are personal articles, not homework. While I was working through the M.S. in Computational Finance and Risk Management at the University of Washington, I kept running into the same itch: the theory looked clean on the whiteboard, but would it actually hold up on real market data? So after each course I picked one idea and went to find out.
 
-Some results matched what I expected, and some didn't. The Normal distribution beat the "better fitting" Laplace in most of my sector tests, which taught me as much as the wins did.
+That meant hunting for cointegrated pairs across the entire S&P 500, pitting three risk measures against each other in a backtest, and forecasting how bank stocks would move on earnings day, the night before they reported.
+
+Not everything went my way. I was sure a fat-tailed Laplace distribution, which fit daily returns far better than a Normal, would make better price forecasts. It didn't. Add up enough Laplace days and you get something that looks a lot like a Normal again. That's the Central Limit Theorem, and I learned it the hard way. Surprises like that taught me more than the wins did.
 
 Read them rendered at **https://roo-ctrl.github.io/quant-projects/**
 
