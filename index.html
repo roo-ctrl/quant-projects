@@ -35,7 +35,7 @@
   <li><a href="laplace-vs-normal-monte-carlo-cfrm501.html">Laplace vs. Normal Monte Carlo</a> <span class="course">(CFRM 501, 2023)</span><br>
   Stock returns have fatter tails than a bell curve, so I tested whether simulating prices with a fatter tailed distribution gives better forecasts. Mostly, it didn’t.</li>
   <li><a href="composition-monte-carlo-earnings-cfrm505.html">Composition Monte Carlo With Earnings</a> <span class="course">(CFRM 505, 2024)</span><br>
-  How a stock moves on earnings day depends on whether the company beats or misses. I modeled both outcomes, mixed them by how often each happens, and forecast JPM, C, and BAC the night before they reported.</li>
+  I built this the same night as the CFRM 505 lecture on composition Monte Carlo. The lecture used bonds and junk bonds as the example, but earnings season was just kicking off, so I spent the whole night applying it to earnings instead. How a stock moves on earnings day depends on whether the company beats or misses, so I built one distribution from the price action after past beats and another after past misses, mixed them by how often each happens, and forecast JPM, C, and BAC the night before they reported. I had a blast.</li>
 </ul>
 <h2>Before the Master’s <span class="course">(please don’t laugh)</span></h2>
 <p>Long before I had the math to back it up, I was already hooked on markets. These are from my physics degree at Oregon State and the years right after, back when I had plenty of curiosity and not much mathematical rigor. Please don’t laugh. I’m proud of them, and of how far things have come since.</p>
@@ -49,6 +49,8 @@
   <em>A very astute (and delightfully blunt) gentleman in my sixth interview at a financial software company let me know, very clearly, that it was not a Monte Carlo. Lesson learned.</em></li>
   <li><a href="early-work/more_smirk_than_smile.html">More Smirk Than Smile</a> <span class="course">(2022)</span><br>
   Textbooks promise options a volatility smile. I collected a week of minute by minute SPY options data, solved for implied volatility by brute force, and animated the curve. It looked a lot more like a smirk.</li>
+  <li><a href="early-work/sector_extensions.html">Sector Extensions</a> <span class="course">(2022)</span><br>
+  In March 2022, with markets selling off, I measured how far about 3,800 stocks were trading from their 50 and 200 day moving averages, averaged it by sector, and went looking for the most stretched corners of the market. Energy and utilities were holding up while healthcare took the biggest hit.</li>
   <li><a href="early-work/hedge_finder_page.html">Hedge Finder</a> <span class="course">(2022)</span><br>
   A small script that takes any stock and ranks the rest of the S&amp;P 500 by how closely their daily moves line up, to find possible hedges. Intel was my test subject.</li>
 </ul>
