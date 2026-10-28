@@ -1,6 +1,6 @@
 # Quant Projects
 
-These are personal articles, not homework. While I was working through the M.S. in Computational Finance and Risk Management at the University of Washington, I kept running into the same itch. The theory looked clean on the whiteboard, but would it actually hold up on real market data? So after each course I picked one idea and went to find out.
+These are personal articles, not homework. While I was working through the M.S. in Computational Finance and Risk Management at the University of Washington, understanding the theory took a lot of effort, and I always wanted to see how it would fare in the real world. So after each course, I picked the one or two topics I was most curious about and built a project around them to find out.
 
 That meant hunting for cointegrated pairs across the entire S&P 500, pitting three risk measures against each other in a backtest, and forecasting how bank stocks would move on earnings day, the night before they reported.
 
