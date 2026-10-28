@@ -1,0 +1,153 @@
+<!DOCTYPE HTML>
+<!--
+	Massively by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Hedge Finder</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+	</head>
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+					<header id="header">
+						<a href="../index.html" class="logo">Back Home</a>
+					</header>
+
+				<!-- Main -->
+					<div id="main">
+						<style>
+							.image 
+							{border:0,
+							display: inline-block;
+							position:relative; }
+							.image img 
+							{display:block;
+							max-width:100%;
+							}
+						</style>
+						<!-- Post -->
+							<section class="post">
+								<header class="major">
+									<h2>Hedge<br />
+									Finder</h2>
+								</header>
+
+								<!-- Text stuff -->
+									<p>Say you’re investing strategy is on the longer side and you have your picks made for the year. There are 3 outcomes your portfolio will be at when t = 365 right? It can increase, decrease, or stay the same. Of course, beating the market is difficult and timing your plays are even harder, so we want to allocate some funds towards a few positions which go against what we believe will happen. This is hedging in a simple explanation, it’s getting into positions that softens the blow to your portfolio if things don’t go as planned. Yes, there is a trade of risk and reward. Just like insurance you’re utilizing your dollars for some safety rather than risking those dollars to potentially make even more money. 
+
+										So how do we find hedges for our ideas? Quantitatively it’s about correlation of price movement. With respect to your stock how does the other stocks in the market move? A correlation of 1 means they move together, -1 meaning they move opposingly, and 0 meaning there is no relationship of price movement between the two stocks. Let’s build a tool that takes an input ticker and spits out correlation values with respect to that input ticker. We’ll stick with the S&P 500 for simplicities sake. 
+										
+										We’ll use a provided for csv of the S&P 500 that looks a like below
+									</p>
+									<p>
+										<a class="image"><img src="images/hedge_pic1.jpg" alt="" /></a>
+									</p>
+
+									<p>
+										Then import the needed libraries. “eod_ohlc_pull” is a personally made library for communicating with EOD Historical Data API, which is where I get my pricing data. That file will be available on GitHub. Other than that all we’ll be using is pandas. 
+									</p>
+									
+									<p>
+										<a class="image"><img src="images/hedge_pic2.jpg" alt="" /></a>
+									</p>
+									<p>
+										Next, we’re going to upload the sp500 csv into a panda’s data frame, and create a new column called “corr” which will keep track of the correlation coefficient with respect to a specific ticker. 
+									</p>
+									<p>
+										<a class="image"><img src="images/hedge_pic3.jpg" alt="" /></a>
+									</p>
+									<p>
+										We’re then going to define a period of time of the pricing data we want, pick our stock (in this case it is INTC), pull that data from that period, and finally create a column of “pct_change” from adjusted close. When we compare our stock INTC to the rest of the S&P we want the correlation coefficient to be in regard to the daily change in price, which is our “pct_change” column.
+									</p>
+									<p>
+										<a class="image"><img src="images/hedge_pic4.jpg" alt="" /></a>
+									</p>
+									<p>
+										Finally, we’re going to do some calculations and output the results into a csv so that we can make a useful graph. It’s a simple for loop that compares our stock INTC “df_symbol” to the rest of the S&P. Each iteration of i is a ticker from the S&P and a correlation coefficient is calculated with respect to our stock INTC. The output is written into a csv.
+									</p>
+									<p>
+										<a class="image"><img src="images/hedge_pic5.jpg" alt="" /></a>
+										<a class="image"><img src="images/hedge_pic6.jpg" alt="" /></a>
+									</p>
+									<p>
+										Above is a sample of the output results we get from running the script. To help us visualize we’ll turn this into a heat map using JMP. That way we can see qualitatively which stocks are the most/least correlated to our stock INTC. 
+									</p>
+									<p>
+										<a class="image"><img src="images/hedge_pic7.jpg" alt="" /></a>
+									</p>
+									<p>
+										At once you can see that the brightest red spot is our stock itself because it has 100 percent correlation to itself. Looking at it a bit more we see that the bottom left corner has a darker red shade while the bottom right corner is more light green. The bottom left holds the tickers which are in the same sector as INTC (Electronic Technology) which makes sense that they are correlated. The bottom right section is the Utilities sector which doesn’t have a whole lot to do with the technology sector, also making sense with the lack of correlation. 
+
+We can take a more quantitative approach at finding a hedge by sorting our initial output to get the most and least correlated.
+
+									</p>
+									<p>
+										<a class="image"><img src="images/hedge_pic8.jpg" alt="" /></a>
+										<a class="image"><img src="images/hedge_pic9.jpg" alt="" /></a>
+									</p>
+									<p>
+										Above are the most and least correlated to our chosen stock over the past year. Now that you have this information you can make plays as you like. This example doesn’t show strong correlation for top or bottom but that will be the case for most stocks within the S&P 500 as they behave similarly. More realistic results will be using a larger set of tickers to compare against your stock, which means creating your own universe of symbols to analyze. The same methods can be used for this but visually inspecting sectors for qualitative hedges would be difficult when the symbols get into the thousands. 
+									</p>
+
+								<!-- Preformatted Code -->
+									<h2>Code</h2>
+									<pre><code>
+import pandas as pd
+import eod_ohlc_pull as eod
+
+df = pd.read_csv('sp500.csv')
+df['corr'] = [0.0]*len(df)
+
+start = '2021-03-13'
+end = '2022-03-13'
+error = []
+symbol = 'INTC'
+df_symbol = eod.ohlc(start, end, symbol)
+df_symbol = pd.DataFrame(df_symbol)
+df_symbol['pct_change'] = (df_symbol['adjusted_close'].pct_change())*100
+
+for i in range(len(df)):
+    try:
+        temp = eod.ohlc(start, end, df['Ticker'][i])
+        temp = pd.DataFrame(temp)
+        temp['pct_change'] = (temp['adjusted_close'].pct_change())*100
+        corr = df_symbol['pct_change'].corr(temp['pct_change'])
+        df['corr'][i] = float(corr)
+    except:
+        error.append(df['Ticker'][i])
+
+df.to_csv('corr_output.csv')
+</code></pre>
+
+							</section>
+
+					</div>
+
+				
+				<!-- Copyright -->
+					<div id="copyright">
+						<ul><li>&copy; Untitled</li><li>Design: <a href="https://html5up.net">HTML5 UP</a></li></ul>
+					</div>
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>

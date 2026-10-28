@@ -13,7 +13,18 @@ You can read them on [the project website](https://roo-ctrl.github.io/quant-proj
 | Article | Course | What it is about |
 |---|---|---|
 | [Housing Research, Wisdom of the Crowd](https://roo-ctrl.github.io/quant-projects/housing-median-price-regime-ensemble.html) | CFRM 521, 2024 · my favorite | Four models forecast my home county’s median sale price, and whichever has done best in similar economic times gets the loudest voice. The blended forecast came out about five times more accurate than the best single model. |
+| [Crypto Cointegration with Walk Forward Analysis*](https://roo-ctrl.github.io/quant-projects/crypto-cointegration-walk-forward-cfrm523.html) | CFRM 523 (2024) | Cointegrated BTC, ETH, LTC, and SOL spreads from Tim Leung’s paper, tuned with walk forward analysis, with a neural network forecast as a second opinion |
 | [Cointegration and the Two Step Method](https://roo-ctrl.github.io/quant-projects/cointegration-pairs-cfrm502.html) | CFRM 502, 2023 | I searched every pair of S&P 500 stocks for two that drift apart and snap back together, then watched how the best three behaved once my data ended. |
 | [Mean Variance vs. MAD vs. CVaR](https://roo-ctrl.github.io/quant-projects/risk-measures-mv-mad-cvar-cfrm503.html) | CFRM 503, 2023 | Three different ways to build a portfolio around risk, each rebuilt every month and run through three years of real markets to see which held up best. |
 | [Laplace vs. Normal Monte Carlo](https://roo-ctrl.github.io/quant-projects/laplace-vs-normal-monte-carlo-cfrm501.html) | CFRM 501, 2023 | Stock returns have fatter tails than a bell curve, so I tested whether simulating prices with a fatter tailed distribution gives better forecasts. Mostly, it didn’t. |
 | [Composition Monte Carlo With Earnings](https://roo-ctrl.github.io/quant-projects/composition-monte-carlo-earnings-cfrm505.html) | CFRM 505, 2024 | How a stock moves on earnings day depends on whether the company beats or misses. I modeled both outcomes, mixed them by how often each happens, and forecast JPM, C, and BAC the night before they reported. |
+
+*Actually was the final project, but I loved that this was my favorite class, and I wanted to share.
+
+## Before the Master’s (please don’t laugh)
+
+Long before I had the math to back it up, I was already hooked on markets. These are from my physics degree at Oregon State and the years right after, back when I had plenty of curiosity and not much mathematical rigor. Please don’t laugh. I’m proud of them, and of how far things have come since.
+
+- [Senior Thesis, Lagrangian Mechanics Description of an Economic System](https://roo-ctrl.github.io/quant-projects/early-work/senior_thesis.html) (Oregon State University, 2018). I simulated an economy of 100 traders swapping five goods, each chasing their own happiness, and used the physics of Lagrange multipliers to see whether supply, demand, and inflation would show up on their own. They did.
+- [More Smirk Than Smile](https://roo-ctrl.github.io/quant-projects/early-work/more_smirk_than_smile.html) (2022). Textbooks promise options a volatility smile. I collected a week of minute by minute SPY options data, solved for implied volatility by brute force, and animated the curve. It looked a lot more like a smirk.
+- [Hedge Finder](https://roo-ctrl.github.io/quant-projects/early-work/hedge_finder_page.html) (2022). A small script that takes any stock and ranks the rest of the S&P 500 by how closely their daily moves line up, to find possible hedges. Intel was my test subject.
