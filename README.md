@@ -21,7 +21,7 @@ Written before I found Claude, so every typo is handmade.
 | [Laplace vs. Normal Monte Carlo](https://roo-ctrl.github.io/quant-projects/laplace-vs-normal-monte-carlo-cfrm501.html) | CFRM 501, 2023 | Stock returns have fatter tails than a bell curve, so I tested whether simulating prices with a fatter tailed distribution gives better forecasts. Mostly, it didn’t. |
 | [Composition Monte Carlo With Earnings](https://roo-ctrl.github.io/quant-projects/composition-monte-carlo-earnings-cfrm505.html) | CFRM 505, 2024 | How a stock moves on earnings day depends on whether the company beats or misses. I modeled both outcomes, mixed them by how often each happens, and forecast JPM, C, and BAC the night before they reported. |
 
-*Actually was the final project, but I loved that this was my favorite class, and I wanted to share.
+*Actually was the final project, but this was my favorite class, and I wanted to share.
 
 ## Before the Master’s (please don’t laugh)
 
