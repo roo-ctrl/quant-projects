@@ -23,7 +23,7 @@ Written before I found Claude, so every typo is handmade.
 
 ## Before the Master’s (please don’t laugh)
 
-Long before I learned to apply math to finance, I was already hooked on markets. Physics gave me plenty of math, just not the tools to point it at markets. Below is my senior thesis from Oregon State, along with the articles and projects I worked on during days off and lunch breaks at Intel, back when all I had was curiosity. Please don’t laugh. I’m proud of them, and of how far things have come since.
+Long before I learned to apply math to finance, I was already hooked on markets. Physics gave me plenty of math, just not the tools to point it at markets. Below is my senior thesis from Oregon State, along with the articles and projects I worked on during days off and lunch breaks at Intel. It’s nice to take a walk down memory lane and see how far I’ve come from pure curiosity.
 
 - [Senior Thesis, Lagrangian Mechanics Description of an Economic System](https://roo-ctrl.github.io/quant-projects/early-work/senior_thesis.html) (Oregon State University, 2018). I simulated an economy of 100 agents swapping five goods, each chasing their own happiness (utility function), and used the physics of Lagrange multipliers to see whether supply, demand, and inflation would show up on their own. They did.
 - [Option Volatility and Pricing, Sheldon Natenberg](https://roo-ctrl.github.io/quant-projects/early-work/natenberg-option-volatility-and-pricing.html) (lunch breaks at Intel). During lunch breaks at Intel and on my days off, I tried to teach myself the daunting world of options with Natenberg’s classic. These are my chapter summaries and worked exercises for chapters 4 through 9, from parity graphs to dynamic hedging.
