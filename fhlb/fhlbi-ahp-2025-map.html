@@ -2,6 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>AHP Subsidy Map</title>
   <!-- ECharts from the CDN -->
   <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
@@ -13,11 +14,39 @@
     #themeBtn { position: fixed; top: 12px; right: 16px; z-index: 10; padding: 6px 12px; border-radius: 16px;
                 border: 1px solid #d0d7e2; background: #ffffff; color: #1F3A5F; font: 12px Arial, sans-serif; cursor: pointer; }
     body.dark #themeBtn { border-color: #3a4352; background: #222a35; color: #e6eaf0; }
+
+    /* Phone layout: the map takes most of the screen and the summary cards move below it as normal page content */
+    #info { display: none; }
+    @media (max-width: 700px) {
+      html, body { height: auto; }
+      #main { height: 78vh; min-height: 460px; }
+      #themeBtn { top: 8px; right: 8px; padding: 5px 10px; font-size: 11px; }
+      #info { display: block; padding: 4px 16px 28px; color: #333333; }
+      .card { border: 1px solid #d0d7e2; border-radius: 10px; padding: 12px 14px; margin: 12px 0; background: #ffffff; }
+      .card .label { font-size: 12px; color: #595959; }
+      .card .big { font-size: 26px; font-weight: bold; color: #1F3A5F; margin: 2px 0; }
+      .card .small { font-size: 12px; color: #595959; }
+      .card.hi { background: #fff4e5; border-color: #E07A1F; }
+      .card.hi .label, .card.hi .small { color: #8a4b0f; }
+      .card.hi .big { color: #E07A1F; }
+      .card h3 { font-size: 13px; margin: 0 0 6px; color: #1F3A5F; }
+      .card ul { margin: 0; padding: 0; list-style: none; }
+      .card li { display: flex; justify-content: space-between; gap: 12px; font-size: 12px; color: #595959; padding: 3px 0; }
+      body.dark #info { color: #e6eaf0; }
+      body.dark .card { background: #1e252f; border-color: #3a4352; }
+      body.dark .card .label, body.dark .card .small, body.dark .card li { color: #b8c0cc; }
+      body.dark .card .big, body.dark .card h3 { color: #9cc3ff; }
+      body.dark .card.hi { background: #33261a; border-color: #E07A1F; }
+      body.dark .card.hi .label, body.dark .card.hi .small { color: #f5c99b; }
+      body.dark .card.hi .big { color: #E07A1F; }
+    }
   </style>
 </head>
 <body>
 <div id="main"></div>
 <button id="themeBtn" type="button">Dark mode</button>
+<!-- Summary cards shown under the map on phones (filled in by the script) -->
+<div id="info"></div>
 <script>
 // ZIP code (ZCTA) boundaries for each state, from the OpenDataDE repo (Census 2010 ZCTAs)
 var GEO_URLS = [
@@ -113,6 +142,11 @@ var T = THEMES[themeName];
 
 var myChart = echarts.init(document.getElementById('main'));
 
+// Phone sized screens get a simpler layout (cards below the map, legend along the bottom)
+function isMobile() {
+  return myChart.getWidth() < 700;
+}
+
 function money(v) {
   // Format dollars like $1,000,000
   return '$' + Math.round(v).toLocaleString('en-US');
@@ -151,6 +185,25 @@ function mapDataFor(byZip, centroids) {
 function mappedText(t, allOn) {
   var label = allOn ? 'On this map: ' : 'Selected banks: ';
   return ROUND_PROJECTS + ' projects in the round. ' + label + money(t.total) + ' across ' + t.count + ' projects';
+}
+
+// Phone version of the cards, written as HTML under the map
+function renderInfo(t, allOn) {
+  function rows(list) {
+    return list.map(function (p) {
+      return '<li><span>' + p.name + ', ' + p.place + '</span><span>' + money(p.subsidy) + '</span></li>';
+    }).join('');
+  }
+  function sum(list) { return list.reduce(function (s, p) { return s + p.subsidy; }, 0); }
+  document.getElementById('info').innerHTML =
+    '<div class="card"><div class="label">2025 AHP round total</div>' +
+    '<div class="big">' + money(ROUND_TOTAL) + '</div>' +
+    '<div class="small">' + mappedText(t, allOn) + '</div></div>' +
+    '<div class="card hi"><div class="label"><b>AHP dollars per FHLBI employee</b></div>' +
+    '<div class="big">' + money(ROUND_TOTAL / EMPLOYEES) + '</div>' +
+    '<div class="small">' + money(ROUND_TOTAL) + ' / ' + EMPLOYEES + ' full-time employees (2025 10-K)</div></div>' +
+    '<div class="card"><h3>Sent to other states: ' + money(sum(OUT_OF_STATE)) + '</h3><ul>' + rows(OUT_OF_STATE) + '</ul></div>' +
+    '<div class="card"><h3>Not on the map yet, address unknown: ' + money(sum(MISSING)) + '</h3><ul>' + rows(MISSING) + '</ul></div>';
 }
 
 function createChart(centroids) {
@@ -212,9 +265,19 @@ function createChart(centroids) {
       if (!on[b]) allOn = false;
     });
     var t0 = totalsFor(on);
+    var mobile = isMobile();
+    renderInfo(t0, allOn);
 
     return {
-      title: {
+      title: mobile ? {
+        // Short title on phones, left aligned so it does not run under the mode button
+        text: 'FHLBI AHP 2025 by ZIP code',
+        subtext: 'Tap a dot for details. Tap a bank below to filter.',
+        left: 12,
+        top: 8,
+        textStyle: { color: T.title, fontSize: 15 },
+        subtextStyle: { color: T.subtitle, fontSize: 11 }
+      } : {
         text: 'FHLBank Indianapolis AHP 2025 subsidy by ZIP code',
         subtext: 'Shaded ZIPs: total AHP dollars. Dots: projects, colored by member bank and sized by subsidy. Click a bank in the legend to filter.',
         left: 'center',
@@ -223,7 +286,8 @@ function createChart(centroids) {
       },
       backgroundColor: T.bg,
       // Summary card in the top left corner: round total, mapped total, and the highlighted per employee figure
-      graphic: [
+      // On phones these cards are drawn as page content under the map instead (see renderInfo)
+      graphic: mobile ? [] : [
         {
           type: 'group',
           left: 20,
@@ -323,7 +387,26 @@ function createChart(centroids) {
         }
       ],
       // Member bank legend on the right: click to hide or show a bank, scroll if the list is long
-      legend: {
+      legend: mobile ? {
+        // Phones: one scrolling row of banks along the bottom of the map
+        type: 'scroll',
+        orient: 'horizontal',
+        left: 8,
+        right: 8,
+        bottom: 6,
+        data: banks,
+        selected: selected,
+        formatter: function (name) { return name + ' (' + bankCounts[name] + ')'; },
+        selector: [{ type: 'all', title: 'All' }, { type: 'inverse', title: 'Invert' }],
+        selectorPosition: 'start',
+        itemWidth: 12,
+        itemHeight: 12,
+        textStyle: { fontSize: 11, color: T.legendText },
+        inactiveColor: T.legendOff,
+        selectorLabel: { color: T.legendText, borderColor: T.cardStroke },
+        pageIconColor: T.legendText,
+        pageTextStyle: { color: T.legendText }
+      } : {
         type: 'scroll',
         orient: 'vertical',
         right: 10,
@@ -343,6 +426,8 @@ function createChart(centroids) {
         roam: true,                                  // drag and zoom
         center: view.center,                         // starts on Indiana and lower Michigan, then keeps wherever the user panned
         zoom: view.zoom,
+        top: mobile ? 92 : 60,                       // leave room for the title (and the dollar bands on phones)
+        bottom: mobile ? 44 : 20,                    // leave room for the bank row on phones
         nameProperty: 'ZCTA5CE10',                   // match data names to the ZIP property in the GeoJSON
         aspectScale: Math.cos((ROUGH_LATITUDE * Math.PI) / 180),
         label: { show: false },                      // ~1,900 ZIPs, so labels stay off
@@ -351,6 +436,8 @@ function createChart(centroids) {
       },
       tooltip: {
         trigger: 'item',
+        confine: true,                               // keep the box on screen on small displays
+        triggerOn: 'mousemove|click',                // tap works on phones
         backgroundColor: T.tipBg,
         borderColor: T.cardStroke,
         textStyle: { color: T.tipText },
@@ -370,16 +457,21 @@ function createChart(centroids) {
         {
           // ZIP shading in dollar bands: gray (no award), then yellow (less money) to red (most money)
           type: 'piecewise',
-          left: 20,
-          bottom: 20,
+          left: mobile ? 12 : 20,
+          top: mobile ? 58 : 'auto',
+          bottom: mobile ? 'auto' : 20,
+          orient: mobile ? 'horizontal' : 'vertical',
+          itemWidth: mobile ? 12 : 20,
+          itemHeight: mobile ? 10 : 14,
+          itemGap: mobile ? 6 : 10,
+          textStyle: { color: T.legendText, fontSize: mobile ? 10 : 12 },
           seriesIndex: 0,
-          textStyle: { color: T.legendText },
           pieces: [
-            { value: 0, color: T.land, label: 'No award' },
-            { gt: 0, lte: 500000, color: '#ffeda0', label: 'Up to $500k' },
-            { gt: 500000, lte: 1000000, color: '#feb24c', label: '$500k to $1M' },
-            { gt: 1000000, lte: 2000000, color: '#f03b20', label: '$1M to $2M' },
-            { gt: 2000000, color: '#bd0026', label: 'Over $2M' }
+            { value: 0, color: T.land, label: mobile ? 'None' : 'No award' },
+            { gt: 0, lte: 500000, color: '#ffeda0', label: mobile ? '<$500k' : 'Up to $500k' },
+            { gt: 500000, lte: 1000000, color: '#feb24c', label: mobile ? '$500k+' : '$500k to $1M' },
+            { gt: 1000000, lte: 2000000, color: '#f03b20', label: mobile ? '$1M+' : '$1M to $2M' },
+            { gt: 2000000, color: '#bd0026', label: mobile ? '$2M+' : 'Over $2M' }
           ]
         }
       ],
@@ -403,7 +495,18 @@ function createChart(centroids) {
   // Everything starts switched on
   var allBanks = {};
   banks.forEach(function (b) { allBanks[b] = true; });
-  myChart.setOption(buildOption(allBanks, { center: [-85.6, 41.6], zoom: 1.3 }));
+  var startView = isMobile() ? { center: [-84.9, 41.2], zoom: 1.25 } : { center: [-85.6, 41.6], zoom: 1.3 };
+  myChart.setOption(buildOption(allBanks, startView));
+
+  // Rebuild when the screen crosses the phone breakpoint (rotating a phone, resizing a window)
+  var wasMobile = isMobile();
+  window.addEventListener('resize', function () {
+    myChart.resize();
+    if (isMobile() !== wasMobile) {
+      wasMobile = isMobile();
+      refresh(myChart.getOption().legend[0].selected);
+    }
+  });
 
   // When banks are switched on or off, rebuild the chart so the ZIP shading and the card match the selection
   myChart.on('legendselectchanged', function (e) { refresh(e.selected); });
@@ -457,7 +560,6 @@ function fetchGeoJSON() {
   });
 }
 
-window.addEventListener('resize', function () { myChart.resize(); });
 fetchGeoJSON();
 </script>
 </body>
