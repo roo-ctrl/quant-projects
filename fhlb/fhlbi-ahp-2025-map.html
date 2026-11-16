@@ -66,6 +66,14 @@ var ROUND_PROJECTS = 43;
 // FHLBI full-time employees at Dec 31, 2025 (Source: FHLBI 2025 Form 10-K, Item 1, Human Capital: 271 full-time plus 1 part-time)
 var EMPLOYEES = 271;
 
+// Projects outside Indiana and Michigan, funded through FHLBI members (Source: FHLBI AHP Awardees 2025 PDF)
+var OUT_OF_STATE = [
+  { name: 'Greenway Cross',        place: 'Fitchburg, WI',   subsidy: 1000000 },
+  { name: 'Hearthside Commons',    place: 'Neenah, WI',      subsidy: 1000000 },
+  { name: 'Mallard Apartments',    place: 'Placerville, CA', subsidy: 750000 },
+  { name: 'Middletown Apartments', place: 'Placerville, CA', subsidy: 750000 }
+];
+
 var myChart = echarts.init(document.getElementById('main'));
 
 function money(v) {
@@ -218,6 +226,32 @@ function createChart(centroids) {
               style: { text: money(ROUND_TOTAL) + ' / ' + EMPLOYEES + ' full-time employees (2025 10-K)', fill: '#8a4b0f', font: '10px Arial' }
             }
           ]
+        },
+        {
+          // Side note card: AHP money sent outside Indiana and Michigan
+          type: 'group',
+          left: 20,
+          top: 272,
+          children: [
+            {
+              type: 'rect', zlevel: 3,
+              shape: { width: 380, height: 46 + 18 * OUT_OF_STATE.length, r: 8 },
+              style: { fill: '#ffffff', stroke: '#d0d7e2', lineWidth: 1, shadowBlur: 6, shadowColor: 'rgba(0,0,0,0.08)' }
+            },
+            {
+              type: 'text', zlevel: 3, left: 16, top: 12,
+              style: {
+                text: 'Sent to other states: ' + money(OUT_OF_STATE.reduce(function (s, p) { return s + p.subsidy; }, 0)),
+                fill: '#1F3A5F', font: 'bold 12px Arial'
+              }
+            }
+          ].concat(OUT_OF_STATE.map(function (p, i) {
+            // One line per project: name, city, amount
+            return {
+              type: 'text', zlevel: 3, left: 16, top: 34 + 18 * i,
+              style: { text: p.name + ', ' + p.place + '   ' + money(p.subsidy), fill: '#595959', font: '11px Arial' }
+            };
+          }))
         }
       ],
       // Member bank legend on the right: click to hide or show a bank, scroll if the list is long
