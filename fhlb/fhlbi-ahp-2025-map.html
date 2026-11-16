@@ -62,8 +62,9 @@ var PROJECTS = [
   { name: 'West Oak Street Housing',                      zip: '46721', subsidy: 1000000, units:  12, member: 'Brotherhood Mutual Insurance Co.' },
   { name: 'Kokomo Rescue Mission Renovation',              zip: '46901', subsidy: 1000000, units:  35, member: 'First Farmers Bank & Trust Co.' },
   { name: 'New Horizons',                                  zip: '46202', subsidy: 1000000, units:  16, member: 'The National Bank of Indianapolis' },
-  { name: 'Winding Way Townhomes',                         zip: '46168', subsidy:  600000, units:  22, member: 'Merchants Bank of Indiana' }
-  // Left off: no ZIP yet (Building Community - Phase III, Center City Lafayette, Fresh Start Housing), or outside Indiana and Michigan (Greenway Cross, Hearthside Commons, Mallard Apartments, Middletown Apartments)
+  { name: 'Winding Way Townhomes',                         zip: '46168', subsidy:  600000, units:  22, member: 'Merchants Bank of Indiana' },
+  { name: 'Building Community - Phase III',                zip: '49503', subsidy:  200000, units:   2, member: 'Mercantile Bank' }
+  // Left off: no address yet (listed in MISSING below), or outside Indiana and Michigan (listed in OUT_OF_STATE below)
 ];
 
 // Rough center latitude of Indiana and Michigan, used to correct the map's stretch
@@ -81,6 +82,12 @@ var OUT_OF_STATE = [
   { name: 'Hearthside Commons',    place: 'Neenah, WI',      subsidy: 1000000 },
   { name: 'Mallard Apartments',    place: 'Placerville, CA', subsidy: 750000 },
   { name: 'Middletown Apartments', place: 'Placerville, CA', subsidy: 750000 }
+];
+
+// Projects with no site address yet, so they are not on the map (move them into PROJECTS once found)
+var MISSING = [
+  { name: 'Center City Lafayette', place: 'Lafayette, IN', subsidy: 600000 },
+  { name: 'Fresh Start Housing',   place: 'Muskegon, MI',  subsidy: 1000000 }
 ];
 
 // Colors for light and dark mode (the ZIP dollar bands and bank colors stay the same in both)
@@ -281,6 +288,32 @@ function createChart(centroids) {
               }
             }
           ].concat(OUT_OF_STATE.map(function (p, i) {
+            // One line per project: name, city, amount
+            return {
+              type: 'text', zlevel: 3, left: 16, top: 34 + 18 * i,
+              style: { text: p.name + ', ' + p.place + '   ' + money(p.subsidy), fill: T.text, font: '11px Arial' }
+            };
+          }))
+        },
+        {
+          // Third card: projects not on the map yet because their site address is unknown
+          type: 'group',
+          left: 20,
+          top: 272 + 46 + 18 * OUT_OF_STATE.length + 12,
+          children: [
+            {
+              type: 'rect', zlevel: 3,
+              shape: { width: 380, height: 46 + 18 * MISSING.length, r: 8 },
+              style: { fill: T.cardFill, stroke: T.cardStroke, lineWidth: 1, shadowBlur: 6, shadowColor: T.shadow }
+            },
+            {
+              type: 'text', zlevel: 3, left: 16, top: 12,
+              style: {
+                text: 'Not on the map yet, address unknown: ' + money(MISSING.reduce(function (s, p) { return s + p.subsidy; }, 0)),
+                fill: T.accent, font: 'bold 12px Arial'
+              }
+            }
+          ].concat(MISSING.map(function (p, i) {
             // One line per project: name, city, amount
             return {
               type: 'text', zlevel: 3, left: 16, top: 34 + 18 * i,
