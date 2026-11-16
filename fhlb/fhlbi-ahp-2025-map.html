@@ -1,0 +1,336 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>AHP Subsidy Map</title>
+  <!-- ECharts from the CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
+  <style>
+    html, body { margin: 0; height: 100%; font-family: Arial, sans-serif; background: #fff; }
+    #main { width: 100%; height: 100%; }
+  </style>
+</head>
+<body>
+<div id="main"></div>
+<script>
+// ZIP code (ZCTA) boundaries for each state, from the OpenDataDE repo (Census 2010 ZCTAs)
+var GEO_URLS = [
+  'https://raw.githubusercontent.com/OpenDataDE/State-zip-code-GeoJSON/master/in_indiana_zip_codes_geo.min.json',
+  'https://raw.githubusercontent.com/OpenDataDE/State-zip-code-GeoJSON/master/mi_michigan_zip_codes_geo.min.json'
+];
+
+// AHP projects from the Google Sheet (zip must be a string)
+var PROJECTS = [
+  { name: '21Flats',                                      zip: '46202', subsidy:  500000, units:  16, member: 'Centier Bank' },
+  { name: '4401 Rosa Parks',                              zip: '48208', subsidy:  850000, units:  60, member: 'Independent Bank' },
+  { name: 'Archdale Senior Apartments',                   zip: '48228', subsidy: 1000000, units:  53, member: 'Independent Bank' },
+  { name: 'Artesian Place',                               zip: '46151', subsidy:  750000, units:  34, member: 'Merchants Bank of Indiana' },
+  { name: 'Bluffton Senior Apartments',                   zip: '46714', subsidy:  690000, units:  46, member: 'Merchants Bank of Indiana' },
+  { name: 'BSV II',                                       zip: '46714', subsidy:  600000, units:  26, member: 'Old National Bank' },
+  { name: 'Charlotte Cove',                               zip: '46818', subsidy: 1000000, units:  50, member: 'Community State Bank' },
+  { name: 'Daffodil Hill',                                zip: '47140', subsidy:  230000, units:   8, member: 'First Savings Bank' },
+  { name: 'Deerpark/111 Lakeview Dr. Apartments',         zip: '46526', subsidy:  221005, units:   8, member: 'Lake City Bank' },
+  { name: 'Eastport Center',                              zip: '49423', subsidy: 1000000, units:  70, member: 'West Michigan Community Bank' },
+  { name: 'Emergency Shelter Facility',                   zip: '46526', subsidy: 1000000, units:  15, member: '1st Source Bank' },
+  { name: 'Family Housing',                               zip: '49201', subsidy: 1000000, units:  17, member: 'County National Bank' },
+  { name: 'Gesu Senior',                                  zip: '48221', subsidy:  700000, units:  36, member: 'Independent Bank' },
+  { name: 'Golden Villa Rental Rehab Project',            zip: '47006', subsidy: 1000000, units:  53, member: 'The Napoleon State Bank' },
+  { name: 'Hope Village',                                 zip: '49507', subsidy: 1000000, units:  12, member: 'Mercantile Bank' },
+  { name: 'Ivy Flats',                                    zip: '46350', subsidy: 1000000, units:  16, member: 'Horizon Bank' },
+  { name: 'LaSalle Park Homes',                           zip: '46619', subsidy: 1000000, units: 150, member: 'Merchants Bank of Indiana' },
+  { name: 'Lighthouse Campus Housing Opportunity Center', zip: '48342', subsidy: 1000000, units:  92, member: 'Genisys Credit Union' },
+  { name: 'Lincoln Avenue Lofts',                         zip: '48060', subsidy:  500000, units:  40, member: 'Genisys Credit Union' },
+  { name: 'Nelson School Apartments',                     zip: '49441', subsidy: 1000000, units:  52, member: 'Merchants Bank of Indiana' },
+  { name: 'Nichols',                                      zip: '47167', subsidy:  300000, units:   7, member: 'First Harrison Bank' },
+  { name: 'North Dearborn Village III',                   zip: '47060', subsidy: 1000000, units:  11, member: 'The Napoleon State Bank' },
+  { name: 'Orchard Grove Apartments',                     zip: '48504', subsidy: 1000000, units:  36, member: 'ELGA Credit Union' },
+  { name: 'Ottawa Townhomes',                             zip: '49423', subsidy:  500000, units:   5, member: 'Macatawa Bank, NA' },
+  { name: 'Pleasant Hills East',                          zip: '49503', subsidy: 1000000, units:  10, member: 'Mercantile Bank' },
+  { name: 'Preserve on Ash III',                          zip: '48208', subsidy:  750000, units:  60, member: 'CORE Community Partners' },
+  { name: 'Preston Townhomes',                            zip: '48214', subsidy:  387500, units:  31, member: 'ELGA Credit Union' },
+  { name: 'Russell Woods Senior Living Community',        zip: '48206', subsidy:  962500, units:  77, member: 'CORE Community Partners' },
+  { name: 'Senior Residences at Harrison Center',         zip: '46216', subsidy:  462500, units:  37, member: 'Merchants Bank of Indiana' },
+  { name: 'Shea Ravines I',                               zip: '49509', subsidy: 1000000, units:  56, member: 'Independent Bank' },
+  { name: 'Trafalgar Senior Apartments',                  zip: '46181', subsidy: 1000000, units:  46, member: 'German American Bank' },
+  { name: 'Vincent Village Revitalization',               zip: '46806', subsidy:  800000, units:   8, member: 'Three Rivers Federal Credit Union' },
+  { name: 'West Oak Street Housing',                      zip: '46721', subsidy: 1000000, units:  12, member: 'Brotherhood Mutual Insurance Co.' }
+  // Left off: no ZIP yet (Building Community - Phase III, Center City Lafayette, Fresh Start Housing, Kokomo Rescue Mission Renovation, New Horizons, Winding Way Townhomes), or outside Indiana and Michigan (Greenway Cross, Hearthside Commons, Mallard Apartments, Middletown Apartments)
+];
+
+// Rough center latitude of Indiana and Michigan, used to correct the map's stretch
+var ROUGH_LATITUDE = 43;
+
+// Whole 2025 competitive round, including projects not on the map (Source: FHLBI AHP Awardees 2025 PDF, 43 projects)
+var ROUND_TOTAL = 34103505;
+var ROUND_PROJECTS = 43;
+// FHLBI full-time employees at Dec 31, 2025 (Source: FHLBI 2025 Form 10-K, Item 1, Human Capital: 271 full-time plus 1 part-time)
+var EMPLOYEES = 271;
+
+var myChart = echarts.init(document.getElementById('main'));
+
+function money(v) {
+  // Format dollars like $1,000,000
+  return '$' + Math.round(v).toLocaleString('en-US');
+}
+
+// Colors for the member bank dots (they repeat after ten banks, the legend names each bank)
+var BANK_COLORS = ['#1F3A5F', '#E07A1F', '#2E8B57', '#8E44AD', '#C0392B', '#16A085', '#D4AC0D', '#2874A6', '#A04000', '#5D6D7E'];
+
+// How far apart (in degrees of latitude) projects that share a ZIP are spread so each one can be hovered
+var SPREAD_DEG = 0.03;
+
+// Totals and per ZIP shading for whichever member banks are switched on in the legend
+function totalsFor(selectedBanks) {
+  var byZip = {};
+  var total = 0;
+  var count = 0;
+  PROJECTS.forEach(function (p) {
+    if (!selectedBanks[p.member]) return;
+    byZip[p.zip] = (byZip[p.zip] || 0) + p.subsidy;
+    total += p.subsidy;
+    count += 1;
+  });
+  return { byZip: byZip, total: total, count: count };
+}
+
+// Map series data: every ZIP gets a value, 0 means no award (gray)
+function mapDataFor(byZip, centroids) {
+  return Object.keys(centroids).map(function (z) {
+    return { name: z, value: byZip[z] || 0 };
+  });
+}
+
+// Text under the round total, describing what the map currently shows
+function mappedText(t, allOn) {
+  var label = allOn ? 'On this map: ' : 'Selected banks: ';
+  return ROUND_PROJECTS + ' projects in the round. ' + label + money(t.total) + ' across ' + t.count + ' projects';
+}
+
+function createChart(centroids) {
+  // Member banks, most projects first, so the legend starts with the biggest participants
+  var bankCounts = {};
+  PROJECTS.forEach(function (p) { bankCounts[p.member] = (bankCounts[p.member] || 0) + 1; });
+  var banks = Object.keys(bankCounts).sort(function (a, b) {
+    return bankCounts[b] - bankCounts[a] || a.localeCompare(b);
+  });
+
+  // Spread projects that share a ZIP around its center point in a small circle
+  var byZipList = {};
+  PROJECTS.forEach(function (p) { (byZipList[p.zip] = byZipList[p.zip] || []).push(p); });
+  var position = {};
+  Object.keys(byZipList).forEach(function (z) {
+    var list = byZipList[z];
+    var c = centroids[z];
+    if (!c) return;
+    list.forEach(function (p, i) {
+      if (list.length === 1) { position[p.name] = c; return; }
+      var angle = (2 * Math.PI * i) / list.length;
+      // Longitude degrees are shorter at this latitude, so stretch the east-west offset to keep the circle round
+      var lonScale = 1 / Math.cos((c[1] * Math.PI) / 180);
+      position[p.name] = [c[0] + SPREAD_DEG * lonScale * Math.cos(angle), c[1] + SPREAD_DEG * Math.sin(angle)];
+    });
+  });
+
+  var maxProject = Math.max.apply(null, PROJECTS.map(function (p) { return p.subsidy; }));
+
+  // One scatter series per member bank, so the legend can switch banks on and off
+  var bankSeries = banks.map(function (bank, i) {
+    return {
+      name: bank,
+      type: 'scatter',
+      coordinateSystem: 'geo',
+      geoIndex: 0,
+      zlevel: 2,
+      // Dot area follows the project's subsidy
+      symbolSize: function (d) { return 7 + 13 * Math.sqrt(d[2] / maxProject); },
+      itemStyle: { color: BANK_COLORS[i % BANK_COLORS.length], opacity: 0.85, borderWidth: 1, borderColor: '#ffffff' },
+      emphasis: { scale: 1.4, itemStyle: { opacity: 1 } },
+      data: PROJECTS.filter(function (p) { return p.member === bank && position[p.name]; }).map(function (p) {
+        var xy = position[p.name];
+        // [lon, lat, subsidy, name, units, zip, member]
+        return [xy[0], xy[1], p.subsidy, p.name, p.units, p.zip, p.member];
+      })
+    };
+  });
+
+  // AHP dollars awarded per FHLBI employee, using the whole round
+  var perEmployee = ROUND_TOTAL / EMPLOYEES;
+
+  // Builds the whole chart for a given legend selection and map view (center and zoom)
+  function buildOption(selected, view) {
+    var on = {};
+    var allOn = true;
+    banks.forEach(function (b) {
+      on[b] = selected[b] !== false;
+      if (!on[b]) allOn = false;
+    });
+    var t0 = totalsFor(on);
+
+    return {
+      title: {
+        text: 'FHLBank Indianapolis AHP 2025 subsidy by ZIP code',
+        subtext: 'Shaded ZIPs: total AHP dollars. Dots: projects, colored by member bank and sized by subsidy. Click a bank in the legend to filter.',
+        left: 'center'
+      },
+      // Summary card in the top left corner: round total, mapped total, and the highlighted per employee figure
+      graphic: [
+        {
+          type: 'group',
+          left: 20,
+          top: 70,
+          zlevel: 3,                               // own canvas layer above the map and the dots, so zooming never covers the card
+          children: [
+            {
+              type: 'rect', zlevel: 3,
+              shape: { width: 380, height: 190, r: 8 },
+              style: { fill: '#ffffff', stroke: '#d0d7e2', lineWidth: 1, shadowBlur: 6, shadowColor: 'rgba(0,0,0,0.08)' }
+            },
+            {
+              type: 'text', zlevel: 3, left: 16, top: 14,
+              style: { text: '2025 AHP round total', fill: '#595959', font: '12px Arial' }
+            },
+            {
+              type: 'text', zlevel: 3, left: 16, top: 32,
+              style: { text: money(ROUND_TOTAL), fill: '#1F3A5F', font: 'bold 24px Arial' }
+            },
+            {
+              // Updated when banks are switched on or off in the legend
+              id: 'mappedText',
+              type: 'text', zlevel: 3, left: 16, top: 62,
+              style: { text: mappedText(t0, allOn), fill: '#595959', font: '11px Arial' }
+            },
+            {
+              // Highlight band behind the per employee figure
+              type: 'rect', zlevel: 3, left: 8, top: 88,
+              shape: { width: 364, height: 92, r: 6 },
+              style: { fill: '#fff4e5', stroke: '#E07A1F', lineWidth: 1.5 }
+            },
+            {
+              type: 'text', zlevel: 3, left: 20, top: 98,
+              style: { text: 'AHP dollars per FHLBI employee', fill: '#8a4b0f', font: 'bold 12px Arial' }
+            },
+            {
+              type: 'text', zlevel: 3, left: 20, top: 116,
+              style: { text: money(perEmployee), fill: '#E07A1F', font: 'bold 28px Arial' }
+            },
+            {
+              type: 'text', zlevel: 3, left: 20, top: 152,
+              style: { text: money(ROUND_TOTAL) + ' / ' + EMPLOYEES + ' full-time employees (2025 10-K)', fill: '#8a4b0f', font: '10px Arial' }
+            }
+          ]
+        }
+      ],
+      // Member bank legend on the right: click to hide or show a bank, scroll if the list is long
+      legend: {
+        type: 'scroll',
+        orient: 'vertical',
+        right: 10,
+        top: 70,
+        bottom: 40,
+        data: banks,
+        selected: selected,                          // keep the user's on and off choices when the chart is rebuilt
+        formatter: function (name) { return name + ' (' + bankCounts[name] + ')'; },
+        selector: [{ type: 'all', title: 'All' }, { type: 'inverse', title: 'Invert' }],
+        selectorPosition: 'start',
+        textStyle: { fontSize: 11 }
+      },
+      geo: {
+        map: 'in-mi',
+        roam: true,                                  // drag and zoom
+        center: view.center,                         // starts on Indiana and lower Michigan, then keeps wherever the user panned
+        zoom: view.zoom,
+        nameProperty: 'ZCTA5CE10',                   // match data names to the ZIP property in the GeoJSON
+        aspectScale: Math.cos((ROUGH_LATITUDE * Math.PI) / 180),
+        label: { show: false },                      // ~1,900 ZIPs, so labels stay off
+        itemStyle: { areaColor: '#f2f2f2', borderColor: '#cfcfcf', borderWidth: 0.3 },
+        emphasis: { label: { show: true, color: '#333' }, itemStyle: { areaColor: '#ffe9a8' } }
+      },
+      tooltip: {
+        trigger: 'item',
+        formatter: function (params) {
+          if (params.seriesType === 'scatter') {
+            var d = params.data;
+            return '<b>' + d[3] + '</b><br/>Member bank: ' + d[6] + '<br/>ZIP ' + d[5] +
+              '<br/>AHP subsidy: ' + money(d[2]) + '<br/>AHP units: ' + d[4];
+          }
+          if (params.value) {
+            return 'ZIP ' + params.name + '<br/>Total AHP subsidy: ' + money(params.value);
+          }
+          return 'ZIP ' + params.name + '<br/>No 2025 AHP award';
+        }
+      },
+      visualMap: [
+        {
+          // ZIP shading in dollar bands: gray (no award), then yellow (less money) to red (most money)
+          type: 'piecewise',
+          left: 20,
+          bottom: 20,
+          seriesIndex: 0,
+          pieces: [
+            { value: 0, color: '#f2f2f2', label: 'No award' },
+            { gt: 0, lte: 500000, color: '#ffeda0', label: 'Up to $500k' },
+            { gt: 500000, lte: 1000000, color: '#feb24c', label: '$500k to $1M' },
+            { gt: 1000000, lte: 2000000, color: '#f03b20', label: '$1M to $2M' },
+            { gt: 2000000, color: '#bd0026', label: 'Over $2M' }
+          ]
+        }
+      ],
+      series: [
+        {
+          // Choropleth that shares the geo component with the dots
+          name: 'ZIP totals',
+          type: 'map',
+          geoIndex: 0,
+          data: mapDataFor(t0.byZip, centroids)
+        }
+      ].concat(bankSeries)
+    };
+  }
+
+  // Everything starts switched on
+  var allBanks = {};
+  banks.forEach(function (b) { allBanks[b] = true; });
+  myChart.setOption(buildOption(allBanks, { center: [-85.6, 41.6], zoom: 1.3 }));
+
+  // When banks are switched on or off, rebuild the chart so the ZIP shading and the card match the selection
+  myChart.on('legendselectchanged', function (e) { refresh(e.selected); });
+  myChart.on('legendselectall', function (e) { refresh(e.selected); });
+  myChart.on('legendinverseselect', function (e) { refresh(e.selected); });
+
+  function refresh(selected) {
+    // Keep the current pan and zoom
+    var g = myChart.getOption().geo[0];
+    myChart.setOption(buildOption(selected, { center: g.center, zoom: g.zoom }), true);
+  }
+}
+
+function fetchGeoJSON() {
+  myChart.showLoading();
+  // Both files are large (about 18 MB and 21 MB), so the first load takes a few seconds
+  Promise.all(GEO_URLS.map(function (u) {
+    return fetch(u).then(function (r) { return r.json(); });
+  })).then(function (collections) {
+    // Merge Indiana and Michigan into one FeatureCollection
+    var merged = { type: 'FeatureCollection', features: [] };
+    var centroids = {};
+    collections.forEach(function (fc) {
+      fc.features.forEach(function (f) {
+        merged.features.push(f);
+        // The Census file includes each ZIP's interior point, which we use for the dots
+        centroids[f.properties.ZCTA5CE10] = [
+          parseFloat(f.properties.INTPTLON10),
+          parseFloat(f.properties.INTPTLAT10)
+        ];
+      });
+    });
+    echarts.registerMap('in-mi', merged);
+    createChart(centroids);
+    myChart.hideLoading();
+  });
+}
+
+window.addEventListener('resize', function () { myChart.resize(); });
+fetchGeoJSON();
+</script>
+</body>
+</html>
