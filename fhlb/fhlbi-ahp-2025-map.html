@@ -6,12 +6,18 @@
   <!-- ECharts from the CDN -->
   <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
   <style>
-    html, body { margin: 0; height: 100%; font-family: Arial, sans-serif; background: #fff; }
+    html, body { margin: 0; height: 100%; font-family: Arial, sans-serif; background: #ffffff; }
+    body.dark { background: #15191f; }
     #main { width: 100%; height: 100%; }
+    /* Light and dark mode switch in the top right corner */
+    #themeBtn { position: fixed; top: 12px; right: 16px; z-index: 10; padding: 6px 12px; border-radius: 16px;
+                border: 1px solid #d0d7e2; background: #ffffff; color: #1F3A5F; font: 12px Arial, sans-serif; cursor: pointer; }
+    body.dark #themeBtn { border-color: #3a4352; background: #222a35; color: #e6eaf0; }
   </style>
 </head>
 <body>
 <div id="main"></div>
+<button id="themeBtn" type="button">Dark mode</button>
 <script>
 // ZIP code (ZCTA) boundaries for each state, from the OpenDataDE repo (Census 2010 ZCTAs)
 var GEO_URLS = [
@@ -74,6 +80,27 @@ var OUT_OF_STATE = [
   { name: 'Middletown Apartments', place: 'Placerville, CA', subsidy: 750000 }
 ];
 
+// Colors for light and dark mode (the ZIP dollar bands and bank colors stay the same in both)
+var THEMES = {
+  light: {
+    bg: '#ffffff', title: '#333333', subtitle: '#666666', text: '#595959', accent: '#1F3A5F',
+    cardFill: '#ffffff', cardStroke: '#d0d7e2', shadow: 'rgba(0,0,0,0.08)',
+    hiFill: '#fff4e5', hiText: '#8a4b0f', land: '#f2f2f2', border: '#cfcfcf', hover: '#ffe9a8',
+    legendText: '#333333', legendOff: '#cccccc', tipBg: '#ffffff', tipText: '#333333'
+  },
+  dark: {
+    bg: '#15191f', title: '#e6eaf0', subtitle: '#a9b2bf', text: '#b8c0cc', accent: '#9cc3ff',
+    cardFill: '#1e252f', cardStroke: '#3a4352', shadow: 'rgba(0,0,0,0.4)',
+    hiFill: '#33261a', hiText: '#f5c99b', land: '#2a313c', border: '#3d4654', hover: '#5a4a20',
+    legendText: '#d5dbe3', legendOff: '#555d6a', tipBg: '#222a35', tipText: '#e6eaf0'
+  }
+};
+
+// Start in the viewer's system setting, or their last choice on this page
+var themeName = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+try { themeName = localStorage.getItem('ahpMapTheme') || themeName; } catch (e) {}
+var T = THEMES[themeName];
+
 var myChart = echarts.init(document.getElementById('main'));
 
 function money(v) {
@@ -83,6 +110,8 @@ function money(v) {
 
 // Colors for the member bank dots (they repeat after ten banks, the legend names each bank)
 var BANK_COLORS = ['#1F3A5F', '#E07A1F', '#2E8B57', '#8E44AD', '#C0392B', '#16A085', '#D4AC0D', '#2874A6', '#A04000', '#5D6D7E'];
+// Same palette for dark mode, with the navy and slate swapped for lighter shades so they show on a dark map
+var BANK_COLORS_DARK = ['#6FA8DC', '#E07A1F', '#2E8B57', '#A569BD', '#E74C3C', '#1ABC9C', '#D4AC0D', '#5DADE2', '#DC7633', '#AAB7C4'];
 
 // How far apart (in degrees of latitude) projects that share a ZIP are spread so each one can be hovered
 var SPREAD_DEG = 0.03;
@@ -151,7 +180,7 @@ function createChart(centroids) {
       zlevel: 2,
       // Dot area follows the project's subsidy
       symbolSize: function (d) { return 7 + 13 * Math.sqrt(d[2] / maxProject); },
-      itemStyle: { color: BANK_COLORS[i % BANK_COLORS.length], opacity: 0.85, borderWidth: 1, borderColor: '#ffffff' },
+      itemStyle: { color: BANK_COLORS[i % BANK_COLORS.length], opacity: 0.85, borderWidth: 1, borderColor: T.bg },
       emphasis: { scale: 1.4, itemStyle: { opacity: 1 } },
       data: PROJECTS.filter(function (p) { return p.member === bank && position[p.name]; }).map(function (p) {
         var xy = position[p.name];
@@ -178,8 +207,11 @@ function createChart(centroids) {
       title: {
         text: 'FHLBank Indianapolis AHP 2025 subsidy by ZIP code',
         subtext: 'Shaded ZIPs: total AHP dollars. Dots: projects, colored by member bank and sized by subsidy. Click a bank in the legend to filter.',
-        left: 'center'
+        left: 'center',
+        textStyle: { color: T.title },
+        subtextStyle: { color: T.subtitle }
       },
+      backgroundColor: T.bg,
       // Summary card in the top left corner: round total, mapped total, and the highlighted per employee figure
       graphic: [
         {
@@ -191,31 +223,31 @@ function createChart(centroids) {
             {
               type: 'rect', zlevel: 3,
               shape: { width: 380, height: 190, r: 8 },
-              style: { fill: '#ffffff', stroke: '#d0d7e2', lineWidth: 1, shadowBlur: 6, shadowColor: 'rgba(0,0,0,0.08)' }
+              style: { fill: T.cardFill, stroke: T.cardStroke, lineWidth: 1, shadowBlur: 6, shadowColor: T.shadow }
             },
             {
               type: 'text', zlevel: 3, left: 16, top: 14,
-              style: { text: '2025 AHP round total', fill: '#595959', font: '12px Arial' }
+              style: { text: '2025 AHP round total', fill: T.text, font: '12px Arial' }
             },
             {
               type: 'text', zlevel: 3, left: 16, top: 32,
-              style: { text: money(ROUND_TOTAL), fill: '#1F3A5F', font: 'bold 24px Arial' }
+              style: { text: money(ROUND_TOTAL), fill: T.accent, font: 'bold 24px Arial' }
             },
             {
               // Updated when banks are switched on or off in the legend
               id: 'mappedText',
               type: 'text', zlevel: 3, left: 16, top: 62,
-              style: { text: mappedText(t0, allOn), fill: '#595959', font: '11px Arial' }
+              style: { text: mappedText(t0, allOn), fill: T.text, font: '11px Arial' }
             },
             {
               // Highlight band behind the per employee figure
               type: 'rect', zlevel: 3, left: 8, top: 88,
               shape: { width: 364, height: 92, r: 6 },
-              style: { fill: '#fff4e5', stroke: '#E07A1F', lineWidth: 1.5 }
+              style: { fill: T.hiFill, stroke: '#E07A1F', lineWidth: 1.5 }
             },
             {
               type: 'text', zlevel: 3, left: 20, top: 98,
-              style: { text: 'AHP dollars per FHLBI employee', fill: '#8a4b0f', font: 'bold 12px Arial' }
+              style: { text: 'AHP dollars per FHLBI employee', fill: T.hiText, font: 'bold 12px Arial' }
             },
             {
               type: 'text', zlevel: 3, left: 20, top: 116,
@@ -223,7 +255,7 @@ function createChart(centroids) {
             },
             {
               type: 'text', zlevel: 3, left: 20, top: 152,
-              style: { text: money(ROUND_TOTAL) + ' / ' + EMPLOYEES + ' full-time employees (2025 10-K)', fill: '#8a4b0f', font: '10px Arial' }
+              style: { text: money(ROUND_TOTAL) + ' / ' + EMPLOYEES + ' full-time employees (2025 10-K)', fill: T.hiText, font: '10px Arial' }
             }
           ]
         },
@@ -236,20 +268,20 @@ function createChart(centroids) {
             {
               type: 'rect', zlevel: 3,
               shape: { width: 380, height: 46 + 18 * OUT_OF_STATE.length, r: 8 },
-              style: { fill: '#ffffff', stroke: '#d0d7e2', lineWidth: 1, shadowBlur: 6, shadowColor: 'rgba(0,0,0,0.08)' }
+              style: { fill: T.cardFill, stroke: T.cardStroke, lineWidth: 1, shadowBlur: 6, shadowColor: T.shadow }
             },
             {
               type: 'text', zlevel: 3, left: 16, top: 12,
               style: {
                 text: 'Sent to other states: ' + money(OUT_OF_STATE.reduce(function (s, p) { return s + p.subsidy; }, 0)),
-                fill: '#1F3A5F', font: 'bold 12px Arial'
+                fill: T.accent, font: 'bold 12px Arial'
               }
             }
           ].concat(OUT_OF_STATE.map(function (p, i) {
             // One line per project: name, city, amount
             return {
               type: 'text', zlevel: 3, left: 16, top: 34 + 18 * i,
-              style: { text: p.name + ', ' + p.place + '   ' + money(p.subsidy), fill: '#595959', font: '11px Arial' }
+              style: { text: p.name + ', ' + p.place + '   ' + money(p.subsidy), fill: T.text, font: '11px Arial' }
             };
           }))
         }
@@ -266,7 +298,9 @@ function createChart(centroids) {
         formatter: function (name) { return name + ' (' + bankCounts[name] + ')'; },
         selector: [{ type: 'all', title: 'All' }, { type: 'inverse', title: 'Invert' }],
         selectorPosition: 'start',
-        textStyle: { fontSize: 11 }
+        textStyle: { fontSize: 11, color: T.legendText },
+        inactiveColor: T.legendOff,
+        selectorLabel: { color: T.legendText, borderColor: T.cardStroke }
       },
       geo: {
         map: 'in-mi',
@@ -276,11 +310,14 @@ function createChart(centroids) {
         nameProperty: 'ZCTA5CE10',                   // match data names to the ZIP property in the GeoJSON
         aspectScale: Math.cos((ROUGH_LATITUDE * Math.PI) / 180),
         label: { show: false },                      // ~1,900 ZIPs, so labels stay off
-        itemStyle: { areaColor: '#f2f2f2', borderColor: '#cfcfcf', borderWidth: 0.3 },
-        emphasis: { label: { show: true, color: '#333' }, itemStyle: { areaColor: '#ffe9a8' } }
+        itemStyle: { areaColor: T.land, borderColor: T.border, borderWidth: 0.3 },
+        emphasis: { label: { show: true, color: T.title }, itemStyle: { areaColor: T.hover } }
       },
       tooltip: {
         trigger: 'item',
+        backgroundColor: T.tipBg,
+        borderColor: T.cardStroke,
+        textStyle: { color: T.tipText },
         formatter: function (params) {
           if (params.seriesType === 'scatter') {
             var d = params.data;
@@ -300,8 +337,9 @@ function createChart(centroids) {
           left: 20,
           bottom: 20,
           seriesIndex: 0,
+          textStyle: { color: T.legendText },
           pieces: [
-            { value: 0, color: '#f2f2f2', label: 'No award' },
+            { value: 0, color: T.land, label: 'No award' },
             { gt: 0, lte: 500000, color: '#ffeda0', label: 'Up to $500k' },
             { gt: 500000, lte: 1000000, color: '#feb24c', label: '$500k to $1M' },
             { gt: 1000000, lte: 2000000, color: '#f03b20', label: '$1M to $2M' },
@@ -317,7 +355,12 @@ function createChart(centroids) {
           geoIndex: 0,
           data: mapDataFor(t0.byZip, centroids)
         }
-      ].concat(bankSeries)
+      ].concat(bankSeries.map(function (s, i) {
+        // Dot outline matches the background so dots stand out in both modes
+        s.itemStyle.borderColor = T.bg;
+        s.itemStyle.color = (themeName === 'dark' ? BANK_COLORS_DARK : BANK_COLORS)[i % BANK_COLORS.length];
+        return s;
+      }))
     };
   }
 
@@ -330,6 +373,21 @@ function createChart(centroids) {
   myChart.on('legendselectchanged', function (e) { refresh(e.selected); });
   myChart.on('legendselectall', function (e) { refresh(e.selected); });
   myChart.on('legendinverseselect', function (e) { refresh(e.selected); });
+
+  // Light and dark mode button: swap the palette and rebuild with the same banks, pan and zoom
+  var btn = document.getElementById('themeBtn');
+  function applyThemeChrome() {
+    document.body.classList.toggle('dark', themeName === 'dark');
+    btn.textContent = themeName === 'dark' ? 'Light mode' : 'Dark mode';
+  }
+  applyThemeChrome();
+  btn.onclick = function () {
+    themeName = themeName === 'dark' ? 'light' : 'dark';
+    T = THEMES[themeName];
+    try { localStorage.setItem('ahpMapTheme', themeName); } catch (e) {}
+    applyThemeChrome();
+    refresh(myChart.getOption().legend[0].selected);
+  };
 
   function refresh(selected) {
     // Keep the current pan and zoom
