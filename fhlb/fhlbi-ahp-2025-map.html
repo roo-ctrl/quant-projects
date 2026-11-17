@@ -276,6 +276,38 @@ function createChart(centroids) {
   // AHP dollars awarded per FHLBI employee, using the whole round
   var perEmployee = ROUND_TOTAL / EMPLOYEES;
 
+  // All and Invert for one list only. ECharts' built in legend selector buttons act on every legend
+  // at once, so inverting the cities also switched off every bank; these buttons touch just their own list
+  function setGroup(kind, mode) {
+    var sel = currentSelected();
+    (kind === 'bank' ? banks : cities).forEach(function (n) {
+      sel[n] = mode === 'all' ? true : sel[n] === false;   // invert: off becomes on, on becomes off
+    });
+    refresh(sel);
+  }
+
+  // A small rounded button drawn on the chart. pos is where it goes, e.g. { right: 14, top: 88 }
+  function pillButton(label, kind, mode, pos) {
+    var w = label.length * 6 + 16;
+    var g = {
+      type: 'group',
+      children: [
+        {
+          type: 'rect', zlevel: 3, shape: { width: w, height: 20, r: 10 },
+          style: { fill: T.cardFill, stroke: T.cardStroke, lineWidth: 1 },
+          cursor: 'pointer',
+          onclick: function () { setGroup(kind, mode); }
+        },
+        {
+          type: 'text', zlevel: 3, left: 8, top: 4, silent: true,   // silent so the tap lands on the rect
+          style: { text: label, fill: T.legendText, font: '11px Arial' }
+        }
+      ]
+    };
+    Object.keys(pos).forEach(function (k) { g[k] = pos[k]; });
+    return g;
+  }
+
   // Builds the whole chart for a given legend selection and map view (center and zoom)
   // selected holds both legends' choices, keyed by bank name and by city name
   function buildOption(selected, view) {
@@ -319,8 +351,16 @@ function createChart(centroids) {
       graphic: mobile ? [
         // Phones: short labels in front of the two filter rows so it is clear which is which
         { type: 'text', left: 10, bottom: 40, style: { text: 'Cities', fill: T.accent, font: 'bold 11px Arial' } },
-        { type: 'text', left: 10, bottom: 12, style: { text: 'Banks', fill: T.accent, font: 'bold 11px Arial' } }
+        { type: 'text', left: 10, bottom: 12, style: { text: 'Banks', fill: T.accent, font: 'bold 11px Arial' } },
+        pillButton('All', 'city', 'all', { left: 52, bottom: 36 }),
+        pillButton('Invert', 'city', 'invert', { left: 90, bottom: 36 }),
+        pillButton('All', 'bank', 'all', { left: 52, bottom: 8 }),
+        pillButton('Invert', 'bank', 'invert', { left: 90, bottom: 8 })
       ] : [
+        pillButton('Invert', 'bank', 'invert', { right: 14, top: 88 }),
+        pillButton('All', 'bank', 'all', { right: 72, top: 88 }),
+        pillButton('Invert', 'city', 'invert', { right: 14, top: cityTop + 18 }),
+        pillButton('All', 'city', 'all', { right: 72, top: cityTop + 18 }),
         {
           // Headings above the two legends on the right
           type: 'text', right: 14, top: 70,
@@ -433,19 +473,16 @@ function createChart(centroids) {
         // Phones: one scrolling row of banks along the bottom of the map
         type: 'scroll',
         orient: 'horizontal',
-        left: 50,
+        left: 150,                                    // after the row label and its All and Invert buttons
         right: 8,
         bottom: 6,
         data: banks,
         selected: selected,
         formatter: function (name) { return name + ' (' + bankCounts[name] + ')'; },
-        selector: [{ type: 'all', title: 'All' }, { type: 'inverse', title: 'Invert' }],
-        selectorPosition: 'start',
         itemWidth: 12,
         itemHeight: 12,
         textStyle: { fontSize: 11, color: T.legendText },
         inactiveColor: T.legendOff,
-        selectorLabel: { color: T.legendText, borderColor: T.cardStroke },
         pageIconColor: T.legendText,
         pageTextStyle: { color: T.legendText }
       } : {
@@ -453,33 +490,27 @@ function createChart(centroids) {
         type: 'scroll',
         orient: 'vertical',
         right: 10,
-        top: 88,
-        height: cityTop - 88 - 16,                    // stop just above the "Cities" heading
+        top: 114,                                     // below the heading and its All and Invert buttons
+        height: cityTop - 114 - 16,                   // stop just above the "Cities" heading
         data: banks,
         selected: selected,                          // keep the user's on and off choices when the chart is rebuilt
         formatter: function (name) { return name + ' (' + bankCounts[name] + ')'; },
-        selector: [{ type: 'all', title: 'All' }, { type: 'inverse', title: 'Invert' }],
-        selectorPosition: 'start',
         textStyle: { fontSize: 11, color: T.legendText },
-        inactiveColor: T.legendOff,
-        selectorLabel: { color: T.legendText, borderColor: T.cardStroke }
+        inactiveColor: T.legendOff
       }, mobile ? {
         // Phones: a second scrolling row of cities just above the banks
         type: 'scroll',
         orient: 'horizontal',
-        left: 50,
+        left: 150,                                    // after the row label and its All and Invert buttons
         right: 8,
         bottom: 34,
         data: cities,
         selected: selected,
         formatter: function (name) { return name + ' (' + cityCounts[name] + ')'; },
-        selector: [{ type: 'all', title: 'All' }, { type: 'inverse', title: 'Invert' }],
-        selectorPosition: 'start',
         itemWidth: 12,
         itemHeight: 12,
         textStyle: { fontSize: 11, color: T.legendText },
         inactiveColor: T.legendOff,
-        selectorLabel: { color: T.legendText, borderColor: T.cardStroke },
         pageIconColor: T.legendText,
         pageTextStyle: { color: T.legendText }
       } : {
@@ -487,17 +518,14 @@ function createChart(centroids) {
         type: 'scroll',
         orient: 'vertical',
         right: 10,
-        top: cityTop + 18,
-        height: H - cityTop - 18 - 20,
+        top: cityTop + 44,                            // below the heading and its All and Invert buttons
+        height: H - cityTop - 44 - 20,
         data: cities,
         selected: selected,
         formatter: function (name) { return name + ' (' + cityCounts[name] + ')'; },  // grant count per city
-        selector: [{ type: 'all', title: 'All' }, { type: 'inverse', title: 'Invert' }],
-        selectorPosition: 'start',
         icon: 'circle',
         textStyle: { fontSize: 11, color: T.legendText },
-        inactiveColor: T.legendOff,
-        selectorLabel: { color: T.legendText, borderColor: T.cardStroke }
+        inactiveColor: T.legendOff
       }],
       geo: {
         map: 'in-mi',
@@ -624,6 +652,8 @@ function createChart(centroids) {
   };
 
   function refresh(selected) {
+    // Close any open tooltip first, the rebuild removes the element it was drawn on
+    myChart.dispatchAction({ type: 'hideTip' });
     // Keep the current pan and zoom
     var g = myChart.getOption().geo[0];
     myChart.setOption(buildOption(selected, { center: g.center, zoom: g.zoom }), true);
