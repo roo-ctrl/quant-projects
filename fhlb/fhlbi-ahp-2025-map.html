@@ -327,6 +327,8 @@ function createChart(centroids) {
     // Desktop: split the right side in two, banks on top and cities below, in pixels so the lists never overlap
     var H = myChart.getHeight();
     var cityTop = Math.round(H * 0.5);
+    // Both lists, their headings and their buttons share one left edge so the dots line up in a single column
+    var colLeft = myChart.getWidth() - 250;
     renderInfo(t0, allOn);
 
     return {
@@ -357,17 +359,17 @@ function createChart(centroids) {
         pillButton('All', 'bank', 'all', { left: 52, bottom: 8 }),
         pillButton('Invert', 'bank', 'invert', { left: 90, bottom: 8 })
       ] : [
-        pillButton('Invert', 'bank', 'invert', { right: 14, top: 88 }),
-        pillButton('All', 'bank', 'all', { right: 72, top: 88 }),
-        pillButton('Invert', 'city', 'invert', { right: 14, top: cityTop + 18 }),
-        pillButton('All', 'city', 'all', { right: 72, top: cityTop + 18 }),
+        pillButton('All', 'bank', 'all', { left: colLeft, top: 88 }),
+        pillButton('Invert', 'bank', 'invert', { left: colLeft + 40, top: 88 }),
+        pillButton('All', 'city', 'all', { left: colLeft, top: cityTop + 18 }),
+        pillButton('Invert', 'city', 'invert', { left: colLeft + 40, top: cityTop + 18 }),
         {
           // Headings above the two legends on the right
-          type: 'text', right: 14, top: 70,
+          type: 'text', left: colLeft, top: 70,
           style: { text: 'Member banks (grants)', fill: T.accent, font: 'bold 12px Arial' }
         },
         {
-          type: 'text', right: 14, top: cityTop,
+          type: 'text', left: colLeft, top: cityTop,
           style: { text: 'Cities (grants)', fill: T.accent, font: 'bold 12px Arial' }
         },
         {
@@ -489,7 +491,7 @@ function createChart(centroids) {
         // Desktop: banks fill the top half of the right side, under a "Member banks" heading
         type: 'scroll',
         orient: 'vertical',
-        right: 10,
+        left: colLeft - 5,                            // same column as the city list below (legend icons have 5px padding)
         top: 114,                                     // below the heading and its All and Invert buttons
         height: cityTop - 114 - 16,                   // stop just above the "Cities" heading
         data: banks,
@@ -517,13 +519,12 @@ function createChart(centroids) {
         // Desktop: cities with grants fill the bottom half of the right side, under a "Cities" heading
         type: 'scroll',
         orient: 'vertical',
-        right: 10,
+        left: colLeft - 5,                            // same column as the bank list above
         top: cityTop + 44,                            // below the heading and its All and Invert buttons
         height: H - cityTop - 44 - 20,
         data: cities,
         selected: selected,
         formatter: function (name) { return name + ' (' + cityCounts[name] + ')'; },  // grant count per city
-        icon: 'circle',
         textStyle: { fontSize: 11, color: T.legendText },
         inactiveColor: T.legendOff
       }],
