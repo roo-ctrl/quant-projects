@@ -54,45 +54,45 @@ var GEO_URLS = [
   'https://raw.githubusercontent.com/OpenDataDE/State-zip-code-GeoJSON/master/mi_michigan_zip_codes_geo.min.json'
 ];
 
-// AHP projects from the Google Sheet (zip must be a string)
+// AHP projects from the Google Sheet (zip must be a string, city is the project's city and state from the sheet)
 var PROJECTS = [
-  { name: '21Flats',                                      zip: '46202', subsidy:  500000, units:  16, member: 'Centier Bank' },
-  { name: '4401 Rosa Parks',                              zip: '48208', subsidy:  850000, units:  60, member: 'Independent Bank' },
-  { name: 'Archdale Senior Apartments',                   zip: '48228', subsidy: 1000000, units:  53, member: 'Independent Bank' },
-  { name: 'Artesian Place',                               zip: '46151', subsidy:  750000, units:  34, member: 'Merchants Bank of Indiana' },
-  { name: 'Bluffton Senior Apartments',                   zip: '46714', subsidy:  690000, units:  46, member: 'Merchants Bank of Indiana' },
-  { name: 'BSV II',                                       zip: '46714', subsidy:  600000, units:  26, member: 'Old National Bank' },
-  { name: 'Charlotte Cove',                               zip: '46818', subsidy: 1000000, units:  50, member: 'Community State Bank' },
-  { name: 'Daffodil Hill',                                zip: '47140', subsidy:  230000, units:   8, member: 'First Savings Bank' },
-  { name: 'Deerpark/111 Lakeview Dr. Apartments',         zip: '46526', subsidy:  221005, units:   8, member: 'Lake City Bank' },
-  { name: 'Eastport Center',                              zip: '49423', subsidy: 1000000, units:  70, member: 'West Michigan Community Bank' },
-  { name: 'Emergency Shelter Facility',                   zip: '46526', subsidy: 1000000, units:  15, member: '1st Source Bank' },
-  { name: 'Family Housing',                               zip: '49201', subsidy: 1000000, units:  17, member: 'County National Bank' },
-  { name: 'Gesu Senior',                                  zip: '48221', subsidy:  700000, units:  36, member: 'Independent Bank' },
-  { name: 'Golden Villa Rental Rehab Project',            zip: '47006', subsidy: 1000000, units:  53, member: 'The Napoleon State Bank' },
-  { name: 'Hope Village',                                 zip: '49507', subsidy: 1000000, units:  12, member: 'Mercantile Bank' },
-  { name: 'Ivy Flats',                                    zip: '46350', subsidy: 1000000, units:  16, member: 'Horizon Bank' },
-  { name: 'LaSalle Park Homes',                           zip: '46619', subsidy: 1000000, units: 150, member: 'Merchants Bank of Indiana' },
-  { name: 'Lighthouse Campus Housing Opportunity Center', zip: '48342', subsidy: 1000000, units:  92, member: 'Genisys Credit Union' },
-  { name: 'Lincoln Avenue Lofts',                         zip: '48060', subsidy:  500000, units:  40, member: 'Genisys Credit Union' },
-  { name: 'Nelson School Apartments',                     zip: '49441', subsidy: 1000000, units:  52, member: 'Merchants Bank of Indiana' },
-  { name: 'Nichols',                                      zip: '47167', subsidy:  300000, units:   7, member: 'First Harrison Bank' },
-  { name: 'North Dearborn Village III',                   zip: '47060', subsidy: 1000000, units:  11, member: 'The Napoleon State Bank' },
-  { name: 'Orchard Grove Apartments',                     zip: '48504', subsidy: 1000000, units:  36, member: 'ELGA Credit Union' },
-  { name: 'Ottawa Townhomes',                             zip: '49423', subsidy:  500000, units:   5, member: 'Macatawa Bank, NA' },
-  { name: 'Pleasant Hills East',                          zip: '49503', subsidy: 1000000, units:  10, member: 'Mercantile Bank' },
-  { name: 'Preserve on Ash III',                          zip: '48208', subsidy:  750000, units:  60, member: 'CORE Community Partners' },
-  { name: 'Preston Townhomes',                            zip: '48214', subsidy:  387500, units:  31, member: 'ELGA Credit Union' },
-  { name: 'Russell Woods Senior Living Community',        zip: '48206', subsidy:  962500, units:  77, member: 'CORE Community Partners' },
-  { name: 'Senior Residences at Harrison Center',         zip: '46216', subsidy:  462500, units:  37, member: 'Merchants Bank of Indiana' },
-  { name: 'Shea Ravines I',                               zip: '49509', subsidy: 1000000, units:  56, member: 'Independent Bank' },
-  { name: 'Trafalgar Senior Apartments',                  zip: '46181', subsidy: 1000000, units:  46, member: 'German American Bank' },
-  { name: 'Vincent Village Revitalization',               zip: '46806', subsidy:  800000, units:   8, member: 'Three Rivers Federal Credit Union' },
-  { name: 'West Oak Street Housing',                      zip: '46721', subsidy: 1000000, units:  12, member: 'Brotherhood Mutual Insurance Co.' },
-  { name: 'Kokomo Rescue Mission Renovation',              zip: '46901', subsidy: 1000000, units:  35, member: 'First Farmers Bank & Trust Co.' },
-  { name: 'New Horizons',                                  zip: '46202', subsidy: 1000000, units:  16, member: 'The National Bank of Indianapolis' },
-  { name: 'Winding Way Townhomes',                         zip: '46168', subsidy:  600000, units:  22, member: 'Merchants Bank of Indiana' },
-  { name: 'Building Community - Phase III',                zip: '49503', subsidy:  200000, units:   2, member: 'Mercantile Bank' }
+  { name: '21Flats',                                      zip: '46202', city: 'Indianapolis, IN', subsidy:  500000, units:  16, member: 'Centier Bank' },
+  { name: '4401 Rosa Parks',                              zip: '48208', city: 'Detroit, MI', subsidy:  850000, units:  60, member: 'Independent Bank' },
+  { name: 'Archdale Senior Apartments',                   zip: '48228', city: 'Detroit, MI', subsidy: 1000000, units:  53, member: 'Independent Bank' },
+  { name: 'Artesian Place',                               zip: '46151', city: 'Martinsville, IN', subsidy:  750000, units:  34, member: 'Merchants Bank of Indiana' },
+  { name: 'Bluffton Senior Apartments',                   zip: '46714', city: 'Bluffton, IN', subsidy:  690000, units:  46, member: 'Merchants Bank of Indiana' },
+  { name: 'BSV II',                                       zip: '46714', city: 'Bluffton, IN', subsidy:  600000, units:  26, member: 'Old National Bank' },
+  { name: 'Charlotte Cove',                               zip: '46818', city: 'Fort Wayne, IN', subsidy: 1000000, units:  50, member: 'Community State Bank' },
+  { name: 'Daffodil Hill',                                zip: '47140', city: 'Marengo, IN', subsidy:  230000, units:   8, member: 'First Savings Bank' },
+  { name: 'Deerpark/111 Lakeview Dr. Apartments',         zip: '46526', city: 'Goshen, IN', subsidy:  221005, units:   8, member: 'Lake City Bank' },
+  { name: 'Eastport Center',                              zip: '49423', city: 'Holland, MI', subsidy: 1000000, units:  70, member: 'West Michigan Community Bank' },
+  { name: 'Emergency Shelter Facility',                   zip: '46526', city: 'Goshen, IN', subsidy: 1000000, units:  15, member: '1st Source Bank' },
+  { name: 'Family Housing',                               zip: '49201', city: 'Jackson, MI', subsidy: 1000000, units:  17, member: 'County National Bank' },
+  { name: 'Gesu Senior',                                  zip: '48221', city: 'Detroit, MI', subsidy:  700000, units:  36, member: 'Independent Bank' },
+  { name: 'Golden Villa Rental Rehab Project',            zip: '47006', city: 'Batesville, IN', subsidy: 1000000, units:  53, member: 'The Napoleon State Bank' },
+  { name: 'Hope Village',                                 zip: '49507', city: 'Grand Rapids, MI', subsidy: 1000000, units:  12, member: 'Mercantile Bank' },
+  { name: 'Ivy Flats',                                    zip: '46350', city: 'La Porte, IN', subsidy: 1000000, units:  16, member: 'Horizon Bank' },
+  { name: 'LaSalle Park Homes',                           zip: '46619', city: 'South Bend, IN', subsidy: 1000000, units: 150, member: 'Merchants Bank of Indiana' },
+  { name: 'Lighthouse Campus Housing Opportunity Center', zip: '48342', city: 'Pontiac, MI', subsidy: 1000000, units:  92, member: 'Genisys Credit Union' },
+  { name: 'Lincoln Avenue Lofts',                         zip: '48060', city: 'Port Huron, MI', subsidy:  500000, units:  40, member: 'Genisys Credit Union' },
+  { name: 'Nelson School Apartments',                     zip: '49441', city: 'Muskegon, MI', subsidy: 1000000, units:  52, member: 'Merchants Bank of Indiana' },
+  { name: 'Nichols',                                      zip: '47167', city: 'Salem, IN', subsidy:  300000, units:   7, member: 'First Harrison Bank' },
+  { name: 'North Dearborn Village III',                   zip: '47060', city: 'West Harrison, IN', subsidy: 1000000, units:  11, member: 'The Napoleon State Bank' },
+  { name: 'Orchard Grove Apartments',                     zip: '48504', city: 'Flint Township, MI', subsidy: 1000000, units:  36, member: 'ELGA Credit Union' },
+  { name: 'Ottawa Townhomes',                             zip: '49423', city: 'Holland, MI', subsidy:  500000, units:   5, member: 'Macatawa Bank, NA' },
+  { name: 'Pleasant Hills East',                          zip: '49503', city: 'Grand Rapids, MI', subsidy: 1000000, units:  10, member: 'Mercantile Bank' },
+  { name: 'Preserve on Ash III',                          zip: '48208', city: 'Detroit, MI', subsidy:  750000, units:  60, member: 'CORE Community Partners' },
+  { name: 'Preston Townhomes',                            zip: '48214', city: 'Detroit, MI', subsidy:  387500, units:  31, member: 'ELGA Credit Union' },
+  { name: 'Russell Woods Senior Living Community',        zip: '48206', city: 'Detroit, MI', subsidy:  962500, units:  77, member: 'CORE Community Partners' },
+  { name: 'Senior Residences at Harrison Center',         zip: '46216', city: 'Lawrence, IN', subsidy:  462500, units:  37, member: 'Merchants Bank of Indiana' },
+  { name: 'Shea Ravines I',                               zip: '49509', city: 'Wyoming, MI', subsidy: 1000000, units:  56, member: 'Independent Bank' },
+  { name: 'Trafalgar Senior Apartments',                  zip: '46181', city: 'Trafalgar, IN', subsidy: 1000000, units:  46, member: 'German American Bank' },
+  { name: 'Vincent Village Revitalization',               zip: '46806', city: 'Fort Wayne, IN', subsidy:  800000, units:   8, member: 'Three Rivers Federal Credit Union' },
+  { name: 'West Oak Street Housing',                      zip: '46721', city: 'Butler, IN', subsidy: 1000000, units:  12, member: 'Brotherhood Mutual Insurance Co.' },
+  { name: 'Kokomo Rescue Mission Renovation',              zip: '46901', city: 'Kokomo, IN', subsidy: 1000000, units:  35, member: 'First Farmers Bank & Trust Co.' },
+  { name: 'New Horizons',                                  zip: '46202', city: 'Indianapolis, IN', subsidy: 1000000, units:  16, member: 'The National Bank of Indianapolis' },
+  { name: 'Winding Way Townhomes',                         zip: '46168', city: 'Plainfield, IN', subsidy:  600000, units:  22, member: 'Merchants Bank of Indiana' },
+  { name: 'Building Community - Phase III',                zip: '49503', city: 'Grand Rapids, MI', subsidy:  200000, units:   2, member: 'Mercantile Bank' }
   // Left off: no address yet (listed in MISSING below), or outside Indiana and Michigan (listed in OUT_OF_STATE below)
 ];
 
@@ -160,13 +160,14 @@ var BANK_COLORS_DARK = ['#6FA8DC', '#E07A1F', '#2E8B57', '#A569BD', '#E74C3C', '
 // How far apart (in degrees of latitude) projects that share a ZIP are spread so each one can be hovered
 var SPREAD_DEG = 0.03;
 
-// Totals and per ZIP shading for whichever member banks are switched on in the legend
-function totalsFor(selectedBanks) {
+// Totals and per ZIP shading for whichever member banks and cities are switched on in the legends
+function totalsFor(selectedBanks, selectedCities) {
   var byZip = {};
   var total = 0;
   var count = 0;
   PROJECTS.forEach(function (p) {
     if (!selectedBanks[p.member]) return;
+    if (!selectedCities[p.city]) return;           // a project shows only when both its bank and its city are on
     byZip[p.zip] = (byZip[p.zip] || 0) + p.subsidy;
     total += p.subsidy;
     count += 1;
@@ -183,7 +184,7 @@ function mapDataFor(byZip, centroids) {
 
 // Text under the round total, describing what the map currently shows
 function mappedText(t, allOn) {
-  var label = allOn ? 'On this map: ' : 'Selected banks: ';
+  var label = allOn ? 'On this map: ' : 'Selected: ';
   return ROUND_PROJECTS + ' projects in the round. ' + label + money(t.total) + ' across ' + t.count + ' projects';
 }
 
@@ -212,6 +213,13 @@ function createChart(centroids) {
   PROJECTS.forEach(function (p) { bankCounts[p.member] = (bankCounts[p.member] || 0) + 1; });
   var banks = Object.keys(bankCounts).sort(function (a, b) {
     return bankCounts[b] - bankCounts[a] || a.localeCompare(b);
+  });
+
+  // Cities with grants, most projects first, for the second legend (the number in parentheses is the grant count)
+  var cityCounts = {};
+  PROJECTS.forEach(function (p) { cityCounts[p.city] = (cityCounts[p.city] || 0) + 1; });
+  var cities = Object.keys(cityCounts).sort(function (a, b) {
+    return cityCounts[b] - cityCounts[a] || a.localeCompare(b);
   });
 
   // Spread projects that share a ZIP around its center point in a small circle
@@ -245,41 +253,62 @@ function createChart(centroids) {
       symbolSize: function (d) { return 7 + 13 * Math.sqrt(d[2] / maxProject); },
       itemStyle: { color: BANK_COLORS[i % BANK_COLORS.length], opacity: 0.85, borderWidth: 1, borderColor: T.bg },
       emphasis: { scale: 1.4, itemStyle: { opacity: 1 } },
-      data: PROJECTS.filter(function (p) { return p.member === bank && position[p.name]; }).map(function (p) {
-        var xy = position[p.name];
-        // [lon, lat, subsidy, name, units, zip, member]
-        return [xy[0], xy[1], p.subsidy, p.name, p.units, p.zip, p.member];
-      })
+      // Filled in by buildOption, which drops projects in cities that are switched off
+      data: []
     };
+  });
+
+  // The dots for one bank, keeping only projects whose city is switched on
+  function bankDots(bank, onCity) {
+    return PROJECTS.filter(function (p) { return p.member === bank && onCity[p.city] && position[p.name]; }).map(function (p) {
+      var xy = position[p.name];
+      // [lon, lat, subsidy, name, units, zip, member, city]
+      return [xy[0], xy[1], p.subsidy, p.name, p.units, p.zip, p.member, p.city];
+    });
+  }
+
+  // One empty series per city. ECharts legends list series by name, so these give the city legend
+  // something to switch on and off; the actual filtering happens in buildOption
+  var citySeries = cities.map(function (c) {
+    return { name: c, type: 'scatter', coordinateSystem: 'geo', geoIndex: 0, data: [], itemStyle: { color: '#8a94a6' } };
   });
 
   // AHP dollars awarded per FHLBI employee, using the whole round
   var perEmployee = ROUND_TOTAL / EMPLOYEES;
 
   // Builds the whole chart for a given legend selection and map view (center and zoom)
+  // selected holds both legends' choices, keyed by bank name and by city name
   function buildOption(selected, view) {
     var on = {};
+    var onCity = {};
     var allOn = true;
     banks.forEach(function (b) {
       on[b] = selected[b] !== false;
       if (!on[b]) allOn = false;
     });
-    var t0 = totalsFor(on);
+    cities.forEach(function (c) {
+      onCity[c] = selected[c] !== false;
+      if (!onCity[c]) allOn = false;
+    });
+    var t0 = totalsFor(on, onCity);
     var mobile = isMobile();
+    // Desktop: split the right side in two, banks on top and cities below, in pixels so the lists never overlap
+    var H = myChart.getHeight();
+    var cityTop = Math.round(H * 0.5);
     renderInfo(t0, allOn);
 
     return {
       title: mobile ? {
         // Short title on phones, left aligned so it does not run under the mode button
         text: 'FHLBI AHP 2025 by ZIP code',
-        subtext: 'Tap a dot for details. Tap a bank below to filter.',
+        subtext: 'Tap a dot for details. Tap a city or bank below to filter.',
         left: 12,
         top: 8,
         textStyle: { color: T.title, fontSize: 15 },
         subtextStyle: { color: T.subtitle, fontSize: 11 }
       } : {
         text: 'FHLBank Indianapolis AHP 2025 subsidy by ZIP code',
-        subtext: 'Shaded ZIPs: total AHP dollars. Dots: projects, colored by member bank and sized by subsidy. Click a bank in the legend to filter.',
+        subtext: 'Shaded ZIPs: total AHP dollars. Dots: projects, colored by member bank and sized by subsidy. Click a bank or city on the right to filter.',
         left: 'center',
         textStyle: { color: T.title },
         subtextStyle: { color: T.subtitle }
@@ -287,7 +316,20 @@ function createChart(centroids) {
       backgroundColor: T.bg,
       // Summary card in the top left corner: round total, mapped total, and the highlighted per employee figure
       // On phones these cards are drawn as page content under the map instead (see renderInfo)
-      graphic: mobile ? [] : [
+      graphic: mobile ? [
+        // Phones: short labels in front of the two filter rows so it is clear which is which
+        { type: 'text', left: 10, bottom: 40, style: { text: 'Cities', fill: T.accent, font: 'bold 11px Arial' } },
+        { type: 'text', left: 10, bottom: 12, style: { text: 'Banks', fill: T.accent, font: 'bold 11px Arial' } }
+      ] : [
+        {
+          // Headings above the two legends on the right
+          type: 'text', right: 14, top: 70,
+          style: { text: 'Member banks (grants)', fill: T.accent, font: 'bold 12px Arial' }
+        },
+        {
+          type: 'text', right: 14, top: cityTop,
+          style: { text: 'Cities (grants)', fill: T.accent, font: 'bold 12px Arial' }
+        },
         {
           type: 'group',
           left: 20,
@@ -386,12 +428,12 @@ function createChart(centroids) {
           }))
         }
       ],
-      // Member bank legend on the right: click to hide or show a bank, scroll if the list is long
-      legend: mobile ? {
+      // Two legends: member banks first, then cities with grants. Click to hide or show, scroll if the list is long
+      legend: [mobile ? {
         // Phones: one scrolling row of banks along the bottom of the map
         type: 'scroll',
         orient: 'horizontal',
-        left: 8,
+        left: 50,
         right: 8,
         bottom: 6,
         data: banks,
@@ -407,11 +449,12 @@ function createChart(centroids) {
         pageIconColor: T.legendText,
         pageTextStyle: { color: T.legendText }
       } : {
+        // Desktop: banks fill the top half of the right side, under a "Member banks" heading
         type: 'scroll',
         orient: 'vertical',
         right: 10,
-        top: 70,
-        bottom: 40,
+        top: 88,
+        height: cityTop - 88 - 16,                    // stop just above the "Cities" heading
         data: banks,
         selected: selected,                          // keep the user's on and off choices when the chart is rebuilt
         formatter: function (name) { return name + ' (' + bankCounts[name] + ')'; },
@@ -420,14 +463,49 @@ function createChart(centroids) {
         textStyle: { fontSize: 11, color: T.legendText },
         inactiveColor: T.legendOff,
         selectorLabel: { color: T.legendText, borderColor: T.cardStroke }
-      },
+      }, mobile ? {
+        // Phones: a second scrolling row of cities just above the banks
+        type: 'scroll',
+        orient: 'horizontal',
+        left: 50,
+        right: 8,
+        bottom: 34,
+        data: cities,
+        selected: selected,
+        formatter: function (name) { return name + ' (' + cityCounts[name] + ')'; },
+        selector: [{ type: 'all', title: 'All' }, { type: 'inverse', title: 'Invert' }],
+        selectorPosition: 'start',
+        itemWidth: 12,
+        itemHeight: 12,
+        textStyle: { fontSize: 11, color: T.legendText },
+        inactiveColor: T.legendOff,
+        selectorLabel: { color: T.legendText, borderColor: T.cardStroke },
+        pageIconColor: T.legendText,
+        pageTextStyle: { color: T.legendText }
+      } : {
+        // Desktop: cities with grants fill the bottom half of the right side, under a "Cities" heading
+        type: 'scroll',
+        orient: 'vertical',
+        right: 10,
+        top: cityTop + 18,
+        height: H - cityTop - 18 - 20,
+        data: cities,
+        selected: selected,
+        formatter: function (name) { return name + ' (' + cityCounts[name] + ')'; },  // grant count per city
+        selector: [{ type: 'all', title: 'All' }, { type: 'inverse', title: 'Invert' }],
+        selectorPosition: 'start',
+        icon: 'circle',
+        textStyle: { fontSize: 11, color: T.legendText },
+        inactiveColor: T.legendOff,
+        selectorLabel: { color: T.legendText, borderColor: T.cardStroke }
+      }],
       geo: {
         map: 'in-mi',
         roam: true,                                  // drag and zoom
         center: view.center,                         // starts on Indiana and lower Michigan, then keeps wherever the user panned
         zoom: view.zoom,
         top: mobile ? 92 : 60,                       // leave room for the title (and the dollar bands on phones)
-        bottom: mobile ? 44 : 20,                    // leave room for the bank row on phones
+        bottom: mobile ? 72 : 20,                    // leave room for the city and bank rows on phones
         nameProperty: 'ZCTA5CE10',                   // match data names to the ZIP property in the GeoJSON
         aspectScale: Math.cos((ROUGH_LATITUDE * Math.PI) / 180),
         label: { show: false },                      // ~1,900 ZIPs, so labels stay off
@@ -444,7 +522,7 @@ function createChart(centroids) {
         formatter: function (params) {
           if (params.seriesType === 'scatter') {
             var d = params.data;
-            return '<b>' + d[3] + '</b><br/>Member bank: ' + d[6] + '<br/>ZIP ' + d[5] +
+            return '<b>' + d[3] + '</b><br/>City: ' + d[7] + '<br/>Member bank: ' + d[6] + '<br/>ZIP ' + d[5] +
               '<br/>AHP subsidy: ' + money(d[2]) + '<br/>AHP units: ' + d[4];
           }
           if (params.value) {
@@ -487,31 +565,48 @@ function createChart(centroids) {
         // Dot outline matches the background so dots stand out in both modes
         s.itemStyle.borderColor = T.bg;
         s.itemStyle.color = (themeName === 'dark' ? BANK_COLORS_DARK : BANK_COLORS)[i % BANK_COLORS.length];
+        s.data = bankDots(s.name, onCity);
         return s;
-      }))
+      })).concat(citySeries)
     };
   }
 
-  // Everything starts switched on
+  // Everything starts switched on, every bank and every city
   var allBanks = {};
   banks.forEach(function (b) { allBanks[b] = true; });
+  cities.forEach(function (c) { allBanks[c] = true; });
+
+  // Both legends' current on and off choices, merged into one object keyed by bank or city name
+  function currentSelected() {
+    var merged = {};
+    myChart.getOption().legend.forEach(function (lg) {
+      Object.keys(lg.selected || {}).forEach(function (k) {
+        if (lg.data.indexOf(k) !== -1) merged[k] = lg.selected[k];   // only trust a legend about its own names
+      });
+    });
+    return merged;
+  }
   var startView = isMobile() ? { center: [-84.9, 41.2], zoom: 1.25 } : { center: [-85.6, 41.6], zoom: 1.3 };
   myChart.setOption(buildOption(allBanks, startView));
 
   // Rebuild when the screen crosses the phone breakpoint (rotating a phone, resizing a window)
   var wasMobile = isMobile();
+  var resizeTimer = null;                         // waits until the user stops dragging before rebuilding
   window.addEventListener('resize', function () {
     myChart.resize();
-    if (isMobile() !== wasMobile) {
+    if (isMobile() !== wasMobile || !isMobile()) {
+      // Crossing the breakpoint changes the layout; on desktop the legend split also follows the window height
       wasMobile = isMobile();
-      refresh(myChart.getOption().legend[0].selected);
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function () { refresh(currentSelected()); }, 150);
     }
   });
 
-  // When banks are switched on or off, rebuild the chart so the ZIP shading and the card match the selection
-  myChart.on('legendselectchanged', function (e) { refresh(e.selected); });
-  myChart.on('legendselectall', function (e) { refresh(e.selected); });
-  myChart.on('legendinverseselect', function (e) { refresh(e.selected); });
+  // When banks or cities are switched on or off, rebuild the chart so the dots, ZIP shading and the card match the selection
+  // (each legend only knows its own choices, so read both rather than trusting e.selected)
+  myChart.on('legendselectchanged', function () { refresh(currentSelected()); });
+  myChart.on('legendselectall', function () { refresh(currentSelected()); });
+  myChart.on('legendinverseselect', function () { refresh(currentSelected()); });
 
   // Light and dark mode button: swap the palette and rebuild with the same banks, pan and zoom
   var btn = document.getElementById('themeBtn');
@@ -525,7 +620,7 @@ function createChart(centroids) {
     T = THEMES[themeName];
     try { localStorage.setItem('ahpMapTheme', themeName); } catch (e) {}
     applyThemeChrome();
-    refresh(myChart.getOption().legend[0].selected);
+    refresh(currentSelected());
   };
 
   function refresh(selected) {
